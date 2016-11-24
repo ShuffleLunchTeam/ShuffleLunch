@@ -35,3 +35,6 @@ gradle-app.setting
 .project
 .settings/
 bin/
+
+# IntelliJ IDEA
+.idea/
