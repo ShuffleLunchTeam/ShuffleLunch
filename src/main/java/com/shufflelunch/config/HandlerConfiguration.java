@@ -28,10 +28,4 @@ public class HandlerConfiguration {
             }
         };
     }
-
-    @Bean
-    public ConfigService getConfigService() {
-        return new ConfigService();
-    }
-
 }

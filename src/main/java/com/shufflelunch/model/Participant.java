@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
-    String mid;
-    String name;
+public class Participant {
+
+    User user;
+
+    Language language;
 }

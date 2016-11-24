@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -18,6 +19,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.google.common.io.ByteStreams;
 import com.shufflelunch.Application;
 import com.shufflelunch.handler.SubscribeLunchHandler;
+import com.shufflelunch.model.User;
+import com.shufflelunch.service.MessageService;
+import com.shufflelunch.service.UserService;
 
 import com.linecorp.bot.client.LineMessagingService;
 import com.linecorp.bot.model.ReplyMessage;
@@ -28,6 +32,7 @@ import com.linecorp.bot.model.event.BeaconEvent;
 import com.linecorp.bot.model.event.Event;
 import com.linecorp.bot.model.event.FollowEvent;
 import com.linecorp.bot.model.event.JoinEvent;
+import com.linecorp.bot.model.event.LeaveEvent;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.PostbackEvent;
 import com.linecorp.bot.model.event.UnfollowEvent;
@@ -76,6 +81,12 @@ public class HelloController {
     private LineMessagingService lineMessagingService;
     @Autowired
     private SubscribeLunchHandler subscribeLunchHandler;
+
+    @Autowired
+    private MessageService messageService;
+
+    @Autowired
+    private UserService userService;
 
     @EventMapping
     public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws IOException {
@@ -152,9 +163,32 @@ public class HelloController {
     }
 
     @EventMapping
-    public void handleFollowEvent(FollowEvent event) {
+    public void handleFollowEvent(FollowEvent event) throws IOException {
         String replyToken = event.getReplyToken();
-        this.replyText(replyToken, "Got followed event");
+
+        String userId = event.getSource().getUserId();
+        Optional<User> userMaybe = userService.getUser(userId);
+        if (userMaybe.isPresent()) {
+            // TODO: Welcome Back Message
+            TextMessage message = messageService.getWelcomeMessage(userMaybe.get().getName());
+            reply(replyToken, message);
+        } else {
+            Response<UserProfileResponse> response = lineMessagingService
+                    .getProfile(userId)
+                    .execute();
+
+            if (response.isSuccessful()) {
+                // Add new User to DB
+                UserProfileResponse profile = response.body();
+                User user = new User(userId, profile.getDisplayName());
+                userService.addUser(user);
+
+                TextMessage message = messageService.getWelcomeMessage(user.getName());
+                reply(replyToken, message);
+            } else {
+                log.error(response.errorBody().string());
+            }
+        }
     }
 
     @EventMapping
@@ -178,6 +212,12 @@ public class HelloController {
     @EventMapping
     public void handleOtherEvent(Event event) {
         log.info("Received message(Ignored): {}", event);
+    }
+
+    @EventMapping
+    public void handleLeaveEvent(LeaveEvent event) {
+        String userId = event.getSource().getUserId();
+        log.info("User:{} just left", userId);
     }
 
     private void reply(@NonNull String replyToken, @NonNull Message message) {
@@ -231,12 +271,31 @@ public class HelloController {
 
         log.info("Got text message from {}: {}", replyToken, text);
         switch (text) {
+
+            //////////////////
+            // ShuffleLunch //
+            //////////////////
+            case "join": {
+                ConfirmTemplate confirmTemplate = new ConfirmTemplate(
+                        "Join Shuffle Lunch?",
+                        new PostbackAction("Yes", "join"),
+                        new MessageAction("No", "No")
+                );
+                TemplateMessage templateMessage = new TemplateMessage("Join Shuffle Lunch?", confirmTemplate);
+                this.reply(replyToken, templateMessage);
+                break;
+            }
+
             case "subscribe":
                 this.reply(replyToken, subscribeLunchHandler.handleSubscribe(event, content));
                 break;
             case "unsubscribe":
                 this.reply(replyToken, subscribeLunchHandler.handleUnSubscribe(event, content));
                 break;
+
+            /////////////
+            // DEFAULT //
+            /////////////
             case "profile": {
                 String userId = event.getSource().getUserId();
                 if (userId != null) {

@@ -1,5 +1,7 @@
 package com.shufflelunch.handler;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,26 +25,33 @@ public class SubscribeLunchHandler {
 
     public Message handleSubscribe(Event event, TextMessageContent content) {
         //get user
-        User user = userService.getUser(event.getSource());
-
-        if (lunchService.hasSuscribedToLunch(user)) {
-            return alreadySuscribed();
+        Optional<User> user = userService.getUser(event.getSource().getUserId());
+        if (user.isPresent()) {
+            if (lunchService.hasSuscribedToLunch(user.get())) {
+                return alreadySuscribed();
+            } else {
+                lunchService.subscribeToLunch(user.get());
+                return suscribed();
+            }
         } else {
-            lunchService.subscribeToLunch(user);
-            return suscribed();
+            return new TextMessage("Unknown User");
         }
     }
 
     public Message handleUnSubscribe(Event event, TextMessageContent content) {
         //get user
-        User user = userService.getUser(event.getSource());
+        Optional<User> user = userService.getUser(event.getSource().getUserId());
+        if (user.isPresent()) {
 
-        if (lunchService.hasSuscribedToLunch(user)) {
-            return notSuscribed();
+            if (lunchService.hasSuscribedToLunch(user.get())) {
+                return notSuscribed();
+            } else {
+                lunchService.unSubscribeToLunch(user.get());
+                return unSuscribed();
+
+            }
         } else {
-            lunchService.unSubscribeToLunch(user);
-            return unSuscribed();
-
+            return new TextMessage("Unknown User");
         }
     }
 

@@ -2,11 +2,14 @@ package com.shufflelunch.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
@@ -15,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -22,6 +26,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.google.common.io.ByteStreams;
+import com.shufflelunch.model.User;
+import com.shufflelunch.service.UserService;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -30,8 +36,6 @@ import okhttp3.mockwebserver.RecordedRequest;
 // integration test
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = "line.bot.handler.enabled=true")
-//@WebAppConfiguration
-//@SpringBootApplication
 public class ApplicationTest {
 
     static {
@@ -41,6 +45,9 @@ public class ApplicationTest {
 
     @Autowired
     private WebApplicationContext wac;
+
+    @MockBean
+    UserService sellerService;
 
     private MockMvc mockMvc;
     private static MockWebServer server;
@@ -68,6 +75,10 @@ public class ApplicationTest {
 
     @Test
     public void validCallbackTest() throws Exception {
+
+        Optional<User> user = Optional.of(new User("sjkghfjhsg", "Brown"));
+        when(sellerService.getUser(any())).thenReturn(user);
+
         server.enqueue(new MockResponse().setBody("{}"));
         server.enqueue(new MockResponse().setBody("{}"));
 
@@ -88,7 +99,8 @@ public class ApplicationTest {
         assertThat(request1.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
         assertThat(request1.getBody().readUtf8())
                 .isEqualTo(
-                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Hello, world\"}]}");
+                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\"," +
+                        "\"text\":\"Hello, world\"}]}");
 
         // Test request 2
         RecordedRequest request2 = server.takeRequest(3, TimeUnit.SECONDS);
@@ -96,7 +108,8 @@ public class ApplicationTest {
         assertThat(request2.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
         assertThat(request2.getBody().readUtf8())
                 .isEqualTo(
-                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"You subscribed for today's lunch\"}]}");
+                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"You subscribed for today's lunch\"}]}")
+        ;
 
         // Test request 3
         RecordedRequest request3 = server.takeRequest(3, TimeUnit.SECONDS);
