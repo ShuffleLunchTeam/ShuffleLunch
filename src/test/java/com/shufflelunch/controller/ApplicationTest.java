@@ -48,41 +48,6 @@ public class ApplicationTest {
     private MockMvc mockMvc;
     private static MockWebServer server;
 
-//    @RestController
-//    @Slf4j
-//    public static class MyController {
-//        @Autowired
-//        private LineMessagingClient lineMessagingClient;
-//
-//        @PostMapping("/callback")
-////        @EventMapping
-//        public void callback(@NonNull @LineBotMessages List<Event> events) throws Exception {
-//            log.info("Got request: {}", events);
-//
-//            for (Event event : events) {
-//                this.handleEvent(event);
-//            }
-//        }
-//
-//        private void handleEvent(Event event) throws Exception {
-//            if (event instanceof MessageEvent) {
-//                MessageContent content = ((MessageEvent) event).getMessage();
-//                if (content instanceof TextMessageContent) {
-//                    String text = ((TextMessageContent) content).getText();
-//                    lineMessagingClient.replyMessage(
-//                            new ReplyMessage(((MessageEvent) event).getReplyToken(),
-//                                             new TextMessage(text)))
-//                                       .get();
-//                }
-//            } else if (event instanceof FollowEvent) {
-//                lineMessagingClient.replyMessage(
-//                        new ReplyMessage(((FollowEvent) event).getReplyToken(),
-//                                         new TextMessage("follow")))
-//                                   .get();
-//            }
-//        }
-//    }
-
     @BeforeClass
     public static void beforeClass() {
         server = new MockWebServer();
@@ -134,6 +99,6 @@ public class ApplicationTest {
         assertThat(request2.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
         assertThat(request2.getBody().readUtf8())
                 .isEqualTo(
-                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"follow\"}]}");
+                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Got followed event\"}]}");
     }
 }
