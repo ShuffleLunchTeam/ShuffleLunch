@@ -14,6 +14,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class FireBaseDao {
 
     @Autowired
@@ -35,7 +38,7 @@ public class FireBaseDao {
 
                 @Override
                 public void onCancelled(DatabaseError error) {
-                    System.out.println(error);
+                    log.error("Failed to read data.", error);
                     lock.countDown();
                 }
             });
@@ -65,7 +68,7 @@ public class FireBaseDao {
 
                 @Override
                 public void onCancelled(DatabaseError error) {
-                    System.out.println(error);
+                    log.error("Failed to read data.", error);
                     lock.countDown();
                 }
             });
