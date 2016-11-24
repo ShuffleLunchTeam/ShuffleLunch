@@ -3,6 +3,7 @@ package com.shufflelunch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 import com.google.firebase.FirebaseApp;
@@ -11,8 +12,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.shufflelunch.config.ConfigService;
 import com.shufflelunch.config.Keys;
 
-@SpringBootApplication
 @PropertySource("classpath:application.properties")
+@Configuration
 public class SpringConfig {
 
     @Autowired
