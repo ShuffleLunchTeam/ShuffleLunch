@@ -37,3 +37,4 @@ In main folder, call `./gradlew bootRun`.
 
  - [Messaging API Link](https://devdocs.line.me/en/?java#messaging-api)
  - [Java Bot SDK](https://github.com/line/line-bot-sdk-java)
+ - [Configuring @LINE Account](https://developers.line.me/messaging-api/getting-started) 
