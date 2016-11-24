@@ -32,3 +32,8 @@ In main folder, call `./gradlew build`.
 In main folder, call `./gradlew bootRun`.
 
 (_application jar can be directly called after a build with `java -jar build/libs/shuffle-lunch-0.1.0.jar`._)
+
+# Notes
+
+ - [Messaging API Link](https://devdocs.line.me/en/?java#messaging-api)
+ - [Java Bot SDK](https://github.com/line/line-bot-sdk-java)
