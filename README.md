@@ -31,6 +31,9 @@ In main folder, call `./gradlew build`.
 ### Run
 In main folder, call `./gradlew bootRun`.
 
+### Run on server
+`sudo SPRING_PROFILES_ACTIVE=real ./gradlew bootRun`
+
 (_application jar can be directly called after a build with `java -jar build/libs/shuffle-lunch-0.1.0.jar`._)
 
 # Notes
