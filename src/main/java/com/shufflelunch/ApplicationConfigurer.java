@@ -16,7 +16,10 @@
 
 package com.shufflelunch;
 
+import com.linecorp.bot.client.LineSignatureValidator;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -35,5 +38,11 @@ public class ApplicationConfigurer extends WebMvcConfigurerAdapter {
                 .addResourceLocations(downloadedContentUri);
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("classpath:/static/");
+    }
+
+    @Bean
+    @Primary
+    public LineSignatureValidator lineSignatureValidator() {
+        return new FakeLineSignatureValidator();
     }
 }

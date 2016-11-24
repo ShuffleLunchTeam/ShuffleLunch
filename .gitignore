@@ -38,7 +38,9 @@ bin/
 
 # IntelliJ IDEA
 .idea/
+classes/
 ShuffleLunch.iml
 
 # Other
 .DS_Store
+.swp
