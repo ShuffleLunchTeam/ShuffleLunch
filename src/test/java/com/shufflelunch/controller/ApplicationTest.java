@@ -32,15 +32,10 @@ import okhttp3.mockwebserver.RecordedRequest;
 // integration test
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { ApplicationTest.class, HelloController.class },
-        properties = "line.bot.handler.enabled=true")
+                properties = "line.bot.handler.enabled=true")
 @WebAppConfiguration
 @SpringBootApplication
 public class ApplicationTest {
-
-    static {
-        System.setProperty("line.bot.channelSecret", "SECRET");
-        System.setProperty("line.bot.channelToken", "TOKEN");
-    }
 
     @Autowired
     private WebApplicationContext wac;
@@ -91,7 +86,8 @@ public class ApplicationTest {
         assertThat(request1.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
         assertThat(request1.getBody().readUtf8())
                 .isEqualTo(
-                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Hello, world\"}]}");
+                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\"," +
+                        "\"text\":\"Hello, world\"}]}");
 
         // Test request 2
         RecordedRequest request2 = server.takeRequest(3, TimeUnit.SECONDS);
@@ -99,6 +95,7 @@ public class ApplicationTest {
         assertThat(request2.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
         assertThat(request2.getBody().readUtf8())
                 .isEqualTo(
-                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Got followed event\"}]}");
+                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\"," +
+                        "\"text\":\"Got followed event\"}]}");
     }
 }
