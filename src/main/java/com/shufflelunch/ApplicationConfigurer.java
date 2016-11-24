@@ -25,9 +25,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.shufflelunch.config.ConfigService;
 import com.shufflelunch.config.Keys;
+import com.shufflelunch.dao.FireBaseDao;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,13 +41,18 @@ public class ApplicationConfigurer extends WebMvcConfigurerAdapter {
     ConfigService configService;
 
     @Bean
-    public FirebaseAuth firebaseAuth() {
+    public FirebaseDatabase firebaseDatabase() {
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setServiceAccount(getClass().getResourceAsStream(configService.get(Keys.FIREBASE_KEY_PATH)))
                 .setDatabaseUrl(configService.get(Keys.FIREBASE_DB_URL))
                 .build();
         FirebaseApp.initializeApp(options);
-        return FirebaseAuth.getInstance();
+        return FirebaseDatabase.getInstance();
+    }
+
+    @Bean
+    public FireBaseDao fireBaseDao() {
+        return new FireBaseDao();
     }
 
     @Override
