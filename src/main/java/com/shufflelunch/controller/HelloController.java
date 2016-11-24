@@ -198,9 +198,32 @@ public class HelloController {
     }
 
     @EventMapping
-    public void handlePostbackEvent(PostbackEvent event) {
+    public void handlePostbackEvent(PostbackEvent event) throws IOException {
         String replyToken = event.getReplyToken();
-        this.replyText(replyToken, "Got postback " + event.getPostbackContent().getData());
+
+        switch (event.getPostbackContent().getData()) {
+            case "join_yes": {
+                String userId = event.getSource().getUserId();
+                String userName = "you";
+                if (userId != null) {
+                    Response<UserProfileResponse> response = lineMessagingService
+                            .getProfile(userId)
+                            .execute();
+                    if (response.isSuccessful()) {
+                        UserProfileResponse profiles = response.body();
+                        userName = profiles.getDisplayName();
+                    }
+                }
+                this.replyText(replyToken, "Registered " + userName + " for today's lunch.");
+                break;
+            }
+            case "join_no": {
+                this.replyText(replyToken, "Not joining today");
+                break;
+            }
+            default:
+                this.replyText(replyToken, "Got postback " + event.getPostbackContent().getData());
+        }
     }
 
     @EventMapping
@@ -278,8 +301,8 @@ public class HelloController {
             case "join": {
                 ConfirmTemplate confirmTemplate = new ConfirmTemplate(
                         "Join Shuffle Lunch?",
-                        new PostbackAction("Yes", "join"),
-                        new MessageAction("No", "No")
+                        new PostbackAction("Yes", "join_yes"),
+                        new PostbackAction("No", "join_no")
                 );
                 TemplateMessage templateMessage = new TemplateMessage("Join Shuffle Lunch?", confirmTemplate);
                 this.reply(replyToken, templateMessage);
