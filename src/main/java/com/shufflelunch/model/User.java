@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class User {
-    Long mid;
+    String mid;
     String name;
 }

@@ -14,10 +14,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -31,10 +29,9 @@ import okhttp3.mockwebserver.RecordedRequest;
 
 // integration test
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = { ApplicationTest.class, HelloController.class },
-        properties = "line.bot.handler.enabled=true")
-@WebAppConfiguration
-@SpringBootApplication
+@SpringBootTest(properties = "line.bot.handler.enabled=true")
+//@WebAppConfiguration
+//@SpringBootApplication
 public class ApplicationTest {
 
     static {
@@ -98,6 +95,14 @@ public class ApplicationTest {
         assertThat(request2.getPath()).isEqualTo("/v2/bot/message/reply");
         assertThat(request2.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
         assertThat(request2.getBody().readUtf8())
+                .isEqualTo(
+                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"You subscribed for today's lunch\"}]}");
+
+        // Test request 3
+        RecordedRequest request3 = server.takeRequest(3, TimeUnit.SECONDS);
+        assertThat(request3.getPath()).isEqualTo("/v2/bot/message/reply");
+        assertThat(request3.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
+        assertThat(request3.getBody().readUtf8())
                 .isEqualTo(
                         "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Got followed event\"}]}");
     }

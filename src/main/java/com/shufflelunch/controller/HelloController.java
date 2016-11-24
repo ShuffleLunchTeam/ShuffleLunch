@@ -17,6 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.google.common.io.ByteStreams;
 import com.shufflelunch.Application;
+import com.shufflelunch.handler.SubscribeLunchHandler;
 
 import com.linecorp.bot.client.LineMessagingService;
 import com.linecorp.bot.model.ReplyMessage;
@@ -73,6 +74,8 @@ public class HelloController {
 
     @Autowired
     private LineMessagingService lineMessagingService;
+    @Autowired
+    private SubscribeLunchHandler subscribeLunchHandler;
 
     @EventMapping
     public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws IOException {
@@ -228,6 +231,12 @@ public class HelloController {
 
         log.info("Got text message from {}: {}", replyToken, text);
         switch (text) {
+            case "subscribe":
+                this.reply(replyToken, subscribeLunchHandler.handleSubscribe(event, content));
+                break;
+            case "unsubscribe":
+                this.reply(replyToken, subscribeLunchHandler.handleUnSubscribe(event, content));
+                break;
             case "profile": {
                 String userId = event.getSource().getUserId();
                 if (userId != null) {
