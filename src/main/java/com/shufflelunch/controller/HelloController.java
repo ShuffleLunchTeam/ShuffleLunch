@@ -71,22 +71,11 @@ import retrofit2.Response;
 @LineMessageHandler
 public class HelloController {
 
-//    @RequestMapping("/")
-//    public String index() {
-//        return "Welcome to ShuffleLunch 2";
-//    }
-
     @Autowired
     private LineMessagingService lineMessagingService;
 
-//    @PostMapping("/callback")
-//    public void callback(@NonNull @LineBotMessages List<Event> events) throws Exception {
-//        log.error("XXX called callback!!!");
-//    }
-
     @EventMapping
     public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws IOException {
-        log.info("XXX called handleTextMessageEvent!!!");
         TextMessageContent message = event.getMessage();
         handleTextContent(event.getReplyToken(), event, message);
     }
