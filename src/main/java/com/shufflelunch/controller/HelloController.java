@@ -268,6 +268,24 @@ public class HelloController {
 
         log.info("Got text message from {}: {}", replyToken, text);
         switch (text) {
+
+            //////////////////
+            // ShuffleLunch //
+            //////////////////
+            case "join": {
+                ConfirmTemplate confirmTemplate = new ConfirmTemplate(
+                        "Join Shuffle Lunch?",
+                        new PostbackAction("Yes", "join"),
+                        new MessageAction("No", "No")
+                );
+                TemplateMessage templateMessage = new TemplateMessage("Join Shuffle Lunch?", confirmTemplate);
+                this.reply(replyToken, templateMessage);
+                break;
+            }
+
+            /////////////
+            // DEFAULT //
+            /////////////
             case "profile": {
                 String userId = event.getSource().getUserId();
                 if (userId != null) {
