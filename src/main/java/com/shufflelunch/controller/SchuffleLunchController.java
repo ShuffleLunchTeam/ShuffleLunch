@@ -216,7 +216,6 @@ public class SchuffleLunchController {
                 break;
             }
             case "join_no": {
-                // TODO cancel the join?
                 reply(replyToken, joinLunchHandler.handleNotJoinConfirmation(event));
                 break;
             }
@@ -228,13 +227,6 @@ public class SchuffleLunchController {
                 reply(replyToken, languageHander.handleLanguageChange(event));
                 break;
             }
-            case "lunch_member": {
-                this.replyText(replyToken, event.getPostbackContent().getData());
-                break;
-            }
-
-            default:
-                this.replyText(replyToken, "Got postback " + event.getPostbackContent().getData());
         }
     }
 
