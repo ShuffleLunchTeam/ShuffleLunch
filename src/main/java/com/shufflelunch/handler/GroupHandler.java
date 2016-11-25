@@ -116,7 +116,7 @@ public class GroupHandler {
         String picture = profiles.getPictureUrl();
 
         CarouselTemplate carouselTemplate = new CarouselTemplate(
-                Arrays.asList(new CarouselColumn(picture, user.getName(), "non-empty string", new ArrayList())));
+                Arrays.asList(new CarouselColumn(picture, user.getName(), "", new ArrayList())));
         return new TemplateMessage("Carousel alt text", carouselTemplate);
     }
 
