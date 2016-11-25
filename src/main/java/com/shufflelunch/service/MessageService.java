@@ -66,7 +66,7 @@ public class MessageService {
         String language = requestingUser.getLanguage();
 
         List<Action> actionList = group.getUserList().stream().filter(
-                u -> u.getMid() != requestingUser.getMid()).map(
+                u -> !u.getMid().equals(requestingUser.getMid())).map(
                 user -> {
                     String label = translationService.getTranslation("message.group.member",
                                                                      Arrays.asList(user.getName()),
