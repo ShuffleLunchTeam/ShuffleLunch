@@ -227,6 +227,10 @@ public class SchuffleLunchController {
                 reply(replyToken, languageHander.handleLanguageChange(event));
                 break;
             }
+            case "lunch_member": {
+                this.replyText(replyToken, event.getPostbackContent().getData());
+                break;
+            }
         }
     }
 
@@ -329,139 +333,9 @@ public class SchuffleLunchController {
             case "shuffle":
                 reply(replyToken, groupHandler.handleShuffleGroup());
                 break;
-            /////////////
-            // DEFAULT //
-            /////////////
-            case "profile": {
-                String userId = event.getSource().getUserId();
-                if (userId != null) {
-                    Response<UserProfileResponse> response = lineMessagingService
-                            .getProfile(userId)
-                            .execute();
-                    if (response.isSuccessful()) {
-                        UserProfileResponse profiles = response.body();
-                        this.reply(
-                                replyToken,
-                                Arrays.asList(new TextMessage(
-                                                      "Display name: " + profiles.getDisplayName()),
-                                              new TextMessage("Status message: "
-                                                              + profiles.getStatusMessage()))
-                        );
-                    } else {
-                        this.replyText(replyToken, response.errorBody().string());
-                    }
-                } else {
-                    this.replyText(replyToken, "Bot can't use profile API without user ID");
-                }
-                break;
-            }
-            case "bye": {
-                Source source = event.getSource();
-                if (source instanceof GroupSource) {
-                    this.replyText(replyToken, "Leaving group");
-                    lineMessagingService.leaveGroup(((GroupSource) source).getGroupId())
-                                        .execute();
-                } else if (source instanceof RoomSource) {
-                    this.replyText(replyToken, "Leaving room");
-                    lineMessagingService.leaveRoom(((RoomSource) source).getRoomId())
-                                        .execute();
-                } else {
-                    this.replyText(replyToken, "Bot can't leave from 1:1 chat");
-                }
-                break;
-            }
-            case "confirm": {
-                ConfirmTemplate confirmTemplate = new ConfirmTemplate(
-                        "Do it?",
-                        new MessageAction("Yes", "Yes!"),
-                        new MessageAction("No", "No!")
-                );
-                TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
-                this.reply(replyToken, templateMessage);
-                break;
-            }
-            case "buttons": {
-                String imageUrl = createUri("/static/buttons/1040.jpg");
-                ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
-                        imageUrl,
-                        "My button sample",
-                        "Hello, my button",
-                        Arrays.asList(
-                                new URIAction("Go to line.me",
-                                              "https://line.me"),
-                                new PostbackAction("Say hello1",
-                                                   "hello こんにちは"),
-                                new PostbackAction("言 hello2",
-                                                   "hello こんにちは",
-                                                   "hello こんにちは"),
-                                new MessageAction("Say message",
-                                                  "Rice=米")
-                        ));
-                TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
-                this.reply(replyToken, templateMessage);
-                break;
-            }
-            case "carousel": {
-                String imageUrl = createUri("/static/buttons/1040.jpg");
-                CarouselTemplate carouselTemplate = new CarouselTemplate(
-                        Arrays.asList(
-                                new CarouselColumn(imageUrl, "hoge", "fuga", Arrays.asList(
-                                        new URIAction("Go to line.me",
-                                                      "https://line.me"),
-                                        new PostbackAction("Say hello1",
-                                                           "hello こんにちは")
-                                )),
-                                new CarouselColumn(imageUrl, "hoge", "fuga", Arrays.asList(
-                                        new PostbackAction("言 hello2",
-                                                           "hello こんにちは",
-                                                           "hello こんにちは"),
-                                        new MessageAction("Say message",
-                                                          "Rice=米")
-                                ))
-                        ));
-                TemplateMessage templateMessage = new TemplateMessage("Carousel alt text", carouselTemplate);
-                this.reply(replyToken, templateMessage);
-                break;
-            }
-            case "imagemap":
-                this.reply(replyToken, new ImagemapMessage(
-                        createUri("/static/rich"),
-                        "This is alt text",
-                        new ImagemapBaseSize(1040, 1040),
-                        Arrays.asList(
-                                new URIImagemapAction(
-                                        "https://store.line.me/family/manga/en",
-                                        new ImagemapArea(
-                                                0, 0, 520, 520
-                                        )
-                                ),
-                                new URIImagemapAction(
-                                        "https://store.line.me/family/music/en",
-                                        new ImagemapArea(
-                                                520, 0, 520, 520
-                                        )
-                                ),
-                                new URIImagemapAction(
-                                        "https://store.line.me/family/play/en",
-                                        new ImagemapArea(
-                                                0, 520, 520, 520
-                                        )
-                                ),
-                                new MessageImagemapAction(
-                                        "URANAI!",
-                                        new ImagemapArea(
-                                                520, 520, 520, 520
-                                        )
-                                )
-                        )
-                ));
-                break;
+
             default:
-                log.info("Returns echo message {}: {}", replyToken, text);
-                this.replyText(
-                        replyToken,
-                        text
-                );
+                log.info("Unhandled message {}: {}", replyToken, text);
                 break;
         }
     }
