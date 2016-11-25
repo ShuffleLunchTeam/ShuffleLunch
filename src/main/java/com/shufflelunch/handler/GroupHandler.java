@@ -1,10 +1,21 @@
 package com.shufflelunch.handler;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.linecorp.bot.client.LineMessagingService;
+import com.linecorp.bot.model.action.Action;
+import com.linecorp.bot.model.action.MessageAction;
+import com.linecorp.bot.model.action.PostbackAction;
+import com.linecorp.bot.model.action.URIAction;
+import com.linecorp.bot.model.message.TemplateMessage;
+import com.linecorp.bot.model.message.template.CarouselColumn;
+import com.linecorp.bot.model.message.template.CarouselTemplate;
+import com.linecorp.bot.model.profile.UserProfileResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,10 +34,14 @@ import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 
 import lombok.extern.slf4j.Slf4j;
+import retrofit2.Response;
 
 @Component
 @Slf4j
 public class GroupHandler {
+
+    @Autowired
+    private LineMessagingService lineMessagingService;
 
     @Autowired
     private GroupService groupService;
@@ -76,6 +91,33 @@ public class GroupHandler {
         } else {
             return ImmutableList.of(new TextMessage("Unknown user"));
         }
+    }
+
+    // Playing with carousel - will probably remove
+    public Message handleGroupRequestCarousel(Event event) throws IOException {
+
+        Optional<User> maybeUser = userService.getUser(event.getSource().getUserId());
+        if (!maybeUser.isPresent()) {
+            log.error("handleGroupRequestCarousel: failed to get user for event: {}", event);
+            return new TextMessage("");
+        }
+
+        User user = maybeUser.get();
+        Response<UserProfileResponse> response = lineMessagingService
+                .getProfile(user.getMid())
+                .execute();
+
+        if (!response.isSuccessful()) {
+            log.error("handleGroupRequestCarousel: couldn't get user profile: {}", response);
+            return new TextMessage("");
+        }
+
+        UserProfileResponse profiles = response.body();
+        String picture = profiles.getPictureUrl();
+
+        CarouselTemplate carouselTemplate = new CarouselTemplate(
+                Arrays.asList(new CarouselColumn(picture, user.getName(), "", new ArrayList())));
+        return new TemplateMessage("Carousel alt text", carouselTemplate);
     }
 
     public Message handleShuffleGroup() {
