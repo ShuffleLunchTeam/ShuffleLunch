@@ -157,24 +157,20 @@ public class ApplicationTest {
 
     @Test
     public void followCallbackTest() throws Exception {
-
-        when(userService.getUser(any())).thenReturn(Optional.empty());
-        when(profileService.getProfile(any())).thenReturn(Optional.empty());
-
         server.enqueue(new MockResponse().setBody("{}"));
 
         String signature = "ECezgIpQNUEp4OSHYd7xGSuFG7e66MLPkCkK1Y28XTU=";
 
+        // Request
         InputStream resource = getClass().getClassLoader().getResourceAsStream("callback-follow.json");
         byte[] json = ByteStreams.toByteArray(resource);
-
         mockMvc.perform(MockMvcRequestBuilders.post("/callback")
                                               .header("X-Line-Signature", signature)
                                               .content(json))
                .andDo(print())
                .andExpect(status().isOk());
 
-        // Test request 2
+        // Request2
         RecordedRequest request2 = server.takeRequest(3, TimeUnit.SECONDS);
 //        assertThat(request2.getPath()).isEqualTo("/v2/bot/message/reply");
         assertThat(request2.getHeader("Authorization")).isEqualTo("Bearer TOKEN");

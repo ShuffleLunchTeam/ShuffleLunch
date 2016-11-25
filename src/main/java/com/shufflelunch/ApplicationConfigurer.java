@@ -53,16 +53,4 @@ public class ApplicationConfigurer extends WebMvcConfigurerAdapter {
     public FireBaseDao fireBaseDao() {
         return new FireBaseDao();
     }
-
-//    @Override
-//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//
-//        String downloadedContentUri = Application.downloadedContentDir
-//                .toUri().toASCIIString();
-//        log.info("downloaded dir: {}", downloadedContentUri);
-//        registry.addResourceHandler("/downloaded/**")
-//                .addResourceLocations(downloadedContentUri);
-//        registry.addResourceHandler("/static/**")
-//                .addResourceLocations("classpath:/static/");
-//    }
 }
