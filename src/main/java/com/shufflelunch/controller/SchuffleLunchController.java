@@ -21,7 +21,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.google.common.io.ByteStreams;
 import com.shufflelunch.Application;
 import com.shufflelunch.model.User;
-import com.shufflelunch.service.MessageService;
 import com.shufflelunch.service.UserService;
 
 import com.linecorp.bot.client.LineMessagingService;
@@ -92,9 +91,6 @@ public class SchuffleLunchController {
 
     @Autowired
     private DebugHandler debugHandler;
-
-    @Autowired
-    private MessageService messageService;
 
     @Autowired
     private UserService userService;

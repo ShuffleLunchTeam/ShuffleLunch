@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -11,6 +12,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TranslationService {
+
+    public String getTranslation(String key, List<String> params, Locale local) {
+        String translation = getTranslation(key, local);
+        for (int i = 0; i < params.size(); i++) {
+            translation = translation.replace("%@", params.get(i));
+        }
+        return translation;
+    }
 
     public String getTranslation(String key, Locale local) {
 

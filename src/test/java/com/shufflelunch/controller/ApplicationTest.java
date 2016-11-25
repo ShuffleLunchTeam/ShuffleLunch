@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -240,7 +241,10 @@ public class ApplicationTest {
     @Test
     public void translationTest() {
         Locale.setDefault(Locale.JAPANESE);
-        assertThat(translationService.getTranslation("welcome", Locale.JAPANESE)).isEqualTo("こんにちは！");
-        assertThat(translationService.getTranslation("welcome", Locale.ENGLISH)).isEqualTo("Welcome!");
+        assertThat(translationService.getTranslation("testWelcome", Locale.JAPANESE)).isEqualTo("こんにちは！");
+        assertThat(translationService.getTranslation("testWelcome", Locale.ENGLISH)).isEqualTo("Welcome!");
+
+        assertThat(translationService.getTranslation("testHello", Arrays.asList("Brown"), Locale.JAPANESE)).isEqualTo("こんにちはBrown！");
+        assertThat(translationService.getTranslation("testHello", Arrays.asList("Brown"), Locale.ENGLISH)).isEqualTo("Hello Brown!");
     }
 }
