@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,55 @@ public class GroupService {
     @Autowired
     FireBaseDao fireBaseDao;
 
+    private final Queue<String> groupNames = new ConcurrentLinkedQueue<>(
+            Arrays.asList("Cony", "Brown", "Sally", "Jessica", "James", "Choco"));
+
+    private final Queue<String> usedGroupNames = new ConcurrentLinkedQueue<String>();
+
+    public Optional<Group> getGroupForUser(User user) {
+        Optional<Group> ret = Optional.empty();
+
+        //TODO most inefficient code ever
+        if (getAllGroupList().isPresent()) {
+            groups:
+            for (Group group : getAllGroupList().get()) {
+                for (User u : group.getUserList()) {
+                    if (u.getMid().equals(user.getMid())) {
+                        ret = Optional.of(group);
+                        break groups;
+                    }
+                }
+            }
+        }
+
+        return ret;
+
+    }
+
+    public void clearGroupNames() {
+        groupNames.addAll(usedGroupNames);
+        usedGroupNames.clear();
+    }
+
+    private String popGroupName() {
+        String name = groupNames.poll();
+        usedGroupNames.add(name);
+        return name;
+    }
+
+    private void pushGroupName(String name) {
+        if (usedGroupNames.remove(name)) {
+            groupNames.add(name);
+        }
+    }
+
+    public Group createGroup(List<User> users) {
+        Group ret = new Group(popGroupName());
+        ret.addUserList(users);
+
+        return ret;
+    }
+
     public void addGroup(Group group) {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> groups = mapper.convertValue(group, new TypeReference<Map<String, Object>>() {});
@@ -40,6 +91,7 @@ public class GroupService {
     }
 
     public boolean deleteGroup(Group group) {
+        pushGroupName(group.getName());
         return deleteGroup(group.getName());
     }
 
@@ -48,6 +100,7 @@ public class GroupService {
     }
 
     public boolean deleteAllGroup() {
+        clearGroupNames();
         return fireBaseDao.delete("groups/");
     }
 
