@@ -17,6 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.google.common.io.ByteStreams;
 import com.shufflelunch.Application;
+import com.shufflelunch.handler.DebugHandler;
 import com.shufflelunch.handler.FollowLunchHandler;
 import com.shufflelunch.handler.HelpHandler;
 import com.shufflelunch.handler.JoinLunchHandler;
@@ -87,6 +88,9 @@ public class SchuffleLunchController {
 
     @Autowired
     private HelpHandler helpHandler;
+
+    @Autowired
+    private DebugHandler debugHandler;
 
     @Autowired
     private MessageService messageService;
@@ -285,10 +289,14 @@ public class SchuffleLunchController {
 
             case "help":
                 reply(replyToken, helpHandler.handleHelp());
+                break;
 
-                /////////////
-                // DEFAULT //
-                /////////////
+            case "debug":
+                reply(replyToken, debugHandler.handleDebug());
+                break;
+            /////////////
+            // DEFAULT //
+            /////////////
             case "profile": {
                 String userId = event.getSource().getUserId();
                 if (userId != null) {
