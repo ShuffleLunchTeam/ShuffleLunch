@@ -9,17 +9,21 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.google.common.io.ByteStreams;
 import com.shufflelunch.Application;
+import com.shufflelunch.handler.DebugHandler;
 import com.shufflelunch.handler.FollowLunchHandler;
 import com.shufflelunch.handler.HelpHandler;
 import com.shufflelunch.handler.JoinLunchHandler;
+import com.shufflelunch.model.User;
 import com.shufflelunch.service.MessageService;
 import com.shufflelunch.service.UserService;
 
@@ -79,6 +83,7 @@ public class SchuffleLunchController {
 
     @Autowired
     private LineMessagingService lineMessagingService;
+
     @Autowired
     private JoinLunchHandler joinLunchHandler;
 
@@ -89,10 +94,39 @@ public class SchuffleLunchController {
     private HelpHandler helpHandler;
 
     @Autowired
+    private DebugHandler debugHandler;
+
+    @Autowired
     private MessageService messageService;
 
     @Autowired
     private UserService userService;
+
+    @EventMapping
+    public void handleFollowEvent(FollowEvent event) throws IOException {
+        String replyToken = event.getReplyToken();
+        Optional<Message> maybeMessage = followLunchHandler.handleFollow(event);
+        maybeMessage.ifPresent(message ->
+                                       reply(replyToken, message)
+        );
+    }
+
+    @EventMapping
+    public void handleUnfollowEvent(UnfollowEvent event) {
+        String userId = event.getSource().getUserId();
+        if (StringUtils.isEmpty(userId)) {
+            log.error("UnfollowEvent: userId is empty: {}", event);
+            return;
+        }
+
+        Optional<User> userMaybe = userService.getUser(userId);
+        if (userMaybe.isPresent()) {
+            userService.deleteUser(userMaybe.get());
+            log.info("UnfollowEvent: User unfollowed this bot: {}", event);
+        } else {
+            log.warn("UnfollowEvent: Not registered user tries to unfollow this bot: {}", event);
+        }
+    }
 
     @EventMapping
     public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws IOException {
@@ -161,17 +195,6 @@ public class SchuffleLunchController {
                     reply(((MessageEvent) event).getReplyToken(),
                           new VideoMessage(mp4.getUri(), previewImg.uri));
                 });
-    }
-
-    @EventMapping
-    public void handleUnfollowEvent(UnfollowEvent event) {
-        log.info("unfollowed this bot: {}", event);
-    }
-
-    @EventMapping
-    public void handleFollowEvent(FollowEvent event) throws IOException {
-        String replyToken = event.getReplyToken();
-        reply(replyToken, followLunchHandler.handleFollow(event));
     }
 
     @EventMapping
@@ -285,10 +308,14 @@ public class SchuffleLunchController {
 
             case "help":
                 reply(replyToken, helpHandler.handleHelp());
+                break;
 
-                /////////////
-                // DEFAULT //
-                /////////////
+            case "debug":
+                reply(replyToken, debugHandler.handleDebug());
+                break;
+            /////////////
+            // DEFAULT //
+            /////////////
             case "profile": {
                 String userId = event.getSource().getUserId();
                 if (userId != null) {

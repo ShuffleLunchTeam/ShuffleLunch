@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.shufflelunch.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,10 @@ public class ParticipantService {
 
     public Optional<List<Participant>> getAllParticipantList() {
         return fireBaseDao.readList("participants", Participant.class);
+    }
+
+    public Optional<Participant> getParticipant(User user) {
+        return fireBaseDao.read("participants/" + user.getMid(), Participant.class);
     }
 
     public void addParticipant(Participant participant) {

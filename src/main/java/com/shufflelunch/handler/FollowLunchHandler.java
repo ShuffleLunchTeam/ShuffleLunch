@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.shufflelunch.model.User;
 import com.shufflelunch.service.MessageService;
@@ -31,27 +32,29 @@ public class FollowLunchHandler {
     @Autowired
     private MessageService messageService;
 
-    public Message handleFollow(Event event)
-            throws IOException {
-
+    public Optional<Message> handleFollow(Event event) throws IOException {
         String userId = event.getSource().getUserId();
+        if (StringUtils.isEmpty(userId)) {
+            log.error("HandleFollow: userId is empty: {}", event);
+            return Optional.empty();
+        }
+
         Optional<User> userMaybe = userService.getUser(userId);
         if (userMaybe.isPresent()) {
-            // TODO: Welcome Back Message
-            return messageService.getWelcomeMessage(userMaybe.get().getName());
+            // TODO: Welcome Back Message?
+            TextMessage message = messageService.getWelcomeMessage(userMaybe.get().getName());
+            return Optional.of(message);
         } else {
-
-            Optional<UserProfileResponse> response = profileService.getProfile(userId);
-
-            if (response.isPresent()) {
-                // Add new User to DB
-                UserProfileResponse profile = response.get();
-                User user = new User(userId, profile.getDisplayName());
+            Optional<UserProfileResponse> userProfileMaybe = profileService.getProfile(userId);
+            if (userProfileMaybe.isPresent()) {
+                User user = new User(userId, userProfileMaybe.get().getDisplayName());
                 userService.addUser(user);
 
-                return messageService.getWelcomeMessage(user.getName());
+                TextMessage message = messageService.getWelcomeMessage(user.getName());
+                return Optional.of(message);
             } else {
-                return new TextMessage("Unknown user profile");
+                TextMessage message = new TextMessage("Unknown user profile");
+                return Optional.of(message);
             }
         }
     }

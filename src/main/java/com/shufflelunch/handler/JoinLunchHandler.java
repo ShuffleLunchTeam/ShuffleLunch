@@ -43,6 +43,11 @@ public class JoinLunchHandler {
         }
 
         User user = maybeUser.get();
+
+        if (participantService.getParticipant(user).isPresent()) {
+            return new TextMessage("You already joined today's lunch");
+        }
+
         participantService.addParticipant(new Participant(user));
         return new TextMessage("Added " + user.getName() + " to the participant list.");
     }
