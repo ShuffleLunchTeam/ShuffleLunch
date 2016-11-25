@@ -18,9 +18,6 @@ import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TemplateMessage;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.message.template.ConfirmTemplate;
-import com.linecorp.bot.model.profile.UserProfileResponse;
-
-import retrofit2.Response;
 
 @Component
 public class JoinLunchHandler {
@@ -35,14 +32,9 @@ public class JoinLunchHandler {
             throws IOException {
         String userId = event.getSource().getUserId();
         String userName = "you";
-        if (userId != null) {
-            Response<UserProfileResponse> response = lineMessagingService
-                    .getProfile(userId)
-                    .execute();
-            if (response.isSuccessful()) {
-                UserProfileResponse profiles = response.body();
-                userName = profiles.getDisplayName();
-            }
+        Optional<User> user = userService.getUser(userId);
+        if (user.isPresent()) {
+            userName = user.get().getName();
         }
 
         return new TextMessage("Registered " + userName + " for today's lunch.");
