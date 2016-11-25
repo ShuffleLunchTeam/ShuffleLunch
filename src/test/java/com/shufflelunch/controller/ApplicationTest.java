@@ -30,6 +30,8 @@ import com.shufflelunch.service.ParticipantService;
 import com.shufflelunch.service.ProfileService;
 import com.shufflelunch.service.UserService;
 
+import com.linecorp.bot.model.profile.UserProfileResponse;
+
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -155,33 +157,53 @@ public class ApplicationTest {
 
     @Test
     public void followCallbackTest() throws Exception {
-
-        when(userService.getUser(any())).thenReturn(Optional.empty());
-        when(profileService.getProfile(any())).thenReturn(Optional.empty());
-
         server.enqueue(new MockResponse().setBody("{}"));
+
+        String userId = "U206d25c2ea6bd87c17655609a1c37cb8";
+        Optional<User> user = Optional.empty();
+        UserProfileResponse userProfile = new UserProfileResponse("Brown", userId, "https://abc.picuture.jpg", "status");
+        when(userService.getUser(userId)).thenReturn(user);
+        when(profileService.getProfile(userId)).thenReturn(Optional.of(userProfile));
 
         String signature = "ECezgIpQNUEp4OSHYd7xGSuFG7e66MLPkCkK1Y28XTU=";
 
+        // Request
         InputStream resource = getClass().getClassLoader().getResourceAsStream("callback-follow.json");
         byte[] json = ByteStreams.toByteArray(resource);
-
         mockMvc.perform(MockMvcRequestBuilders.post("/callback")
                                               .header("X-Line-Signature", signature)
                                               .content(json))
                .andDo(print())
                .andExpect(status().isOk());
 
-        // Test request 2
-        RecordedRequest request2 = server.takeRequest(3, TimeUnit.SECONDS);
-//        assertThat(request2.getPath()).isEqualTo("/v2/bot/message/reply");
-        assertThat(request2.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
-        System.out.println("YYY");
-        System.out.println(request2.getBody().readUtf8());
-//        assertThat(request2.getBody().readUtf8())
-//                .contains(
-//                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Registered Brown for today's lunch.\"}]}");
+        // Validate Response
+        RecordedRequest recordedRequest = server.takeRequest(3, TimeUnit.SECONDS);
+        assertThat(recordedRequest.getPath()).isEqualTo("/v2/bot/message/reply");
+        assertThat(recordedRequest.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
+        assertThat(recordedRequest.getBody().readUtf8())
+                .contains(
+                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Hello Brown, welcome to Shuffle Lunch!\\nDo you want want to join "
+                        + "today?\\n\"}]}");
+    }
 
+    @Test
+    public void unfollowCallbackTest() throws Exception {
+        server.enqueue(new MockResponse().setBody("{}"));
+
+        String userId = "U206d25c2ea6bd87c17655609a1c37cb8";
+        Optional<User> user = Optional.of(new User(userId, "Brown"));
+        when(userService.getUser(userId)).thenReturn(user);
+
+        String signature = "ECezgIpQNUEp4OSHYd7xGSuFG7e66MLPkCkK1Y28XTU=";
+
+        // Request
+        InputStream resource = getClass().getClassLoader().getResourceAsStream("callback-unfollow.json");
+        byte[] json = ByteStreams.toByteArray(resource);
+        mockMvc.perform(MockMvcRequestBuilders.post("/callback")
+                                              .header("X-Line-Signature", signature)
+                                              .content(json))
+               .andDo(print())
+               .andExpect(status().isOk());
     }
 
     @Test
