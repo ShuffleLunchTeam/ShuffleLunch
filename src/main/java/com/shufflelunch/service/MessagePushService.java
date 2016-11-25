@@ -1,15 +1,12 @@
-package com.shufflelunch.handler;
+package com.shufflelunch.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.shufflelunch.model.User;
-import com.shufflelunch.service.GroupService;
-import com.shufflelunch.service.MessageService;
-import com.shufflelunch.service.UserService;
 
-@Component
-public class MessagePushHandler {
+@Service
+public class MessagePushService {
 
     @Autowired
     MessageService messageService;
