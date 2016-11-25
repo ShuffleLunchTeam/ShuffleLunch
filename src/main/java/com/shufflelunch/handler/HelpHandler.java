@@ -21,8 +21,9 @@ public class HelpHandler {
     }
 
     public List<String> infos() {
-        return ImmutableList.of(" - help : displays this help messages",
+        return ImmutableList.of(" - help : displays this help message",
                                 " - join : allow you to register for next lunch",
+                                " - leave : remove your registration for the next lunch",
                                 " - group : lets you know your group and meeting point for lunch");
     }
 }
