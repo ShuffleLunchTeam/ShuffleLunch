@@ -13,7 +13,7 @@ import com.shufflelunch.model.User;
 //TODO real implementation
 public class LunchService {
 
-    LoadingCache<String, Boolean> cacheSuscribeLunch = CacheBuilder.newBuilder()
+    LoadingCache<String, Boolean> cacheSubscribeLunch = CacheBuilder.newBuilder()
                                                                    .maximumSize(100)
                                                                    .expireAfterWrite(4, TimeUnit.HOURS)
                                                                    .build(new CacheLoader<String, Boolean>() {
@@ -24,15 +24,15 @@ public class LunchService {
                                                                    });
 
     public boolean hasSuscribedToLunch(User user) {
-        return cacheSuscribeLunch.getUnchecked(user.getMid());
+        return cacheSubscribeLunch.getUnchecked(user.getMid());
     }
 
     public void subscribeToLunch(User user) {
-        cacheSuscribeLunch.put(user.getMid(), Boolean.TRUE);
+        cacheSubscribeLunch.put(user.getMid(), Boolean.TRUE);
     }
 
     public void unSubscribeToLunch(User user) {
-        cacheSuscribeLunch.put(user.getMid(), Boolean.FALSE);
+        cacheSubscribeLunch.put(user.getMid(), Boolean.FALSE);
     }
 
 }
