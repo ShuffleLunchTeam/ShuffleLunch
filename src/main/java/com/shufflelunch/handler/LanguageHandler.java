@@ -4,7 +4,6 @@ import java.util.Locale;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -47,6 +46,7 @@ public class LanguageHandler {
         String userId = event.getSource().getUserId();
         if (StringUtils.isEmpty(userId)) {
             log.error("handleLanguageChange: userId is empty: {}", event);
+            message = "Sorry, you are not a member of ShuffleLunch";
             return new TextMessage(message);
         }
         Optional<User> maybeUser = userService.getUser(userId);
@@ -58,6 +58,7 @@ public class LanguageHandler {
                 case "lang_ja": {
                     user.setLanguage(Locale.JAPANESE.getLanguage());
                     message = translationService.getTranslation("message.changedLanguage", Locale.JAPANESE.getLanguage());
+                    log.error("handleLanguageChange: userId is empty: {}", event);
                     break;
                 }
                 case "lang_en": {

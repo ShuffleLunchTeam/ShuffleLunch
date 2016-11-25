@@ -10,6 +10,9 @@ import java.util.Properties;
 
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class TranslationService {
 
@@ -23,6 +26,7 @@ public class TranslationService {
 
     public String getTranslation(String key, String language) {
 
+        log.info("getTranslation:{}", language);
         InputStream utf8in;
         if (language == Locale.ENGLISH.getLanguage()) {
             utf8in = getClass().getClassLoader().getResourceAsStream("translation_" + language + ".properties");
