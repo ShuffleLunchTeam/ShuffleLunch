@@ -233,9 +233,7 @@ public class ApplicationTest {
         assertThat(request2.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
         assertThat(request2.getBody().readUtf8())
                 .contains(
-                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Available commands are :\"},{\"type\":\"text\",\"text\":\" - help : displays "
-                        + "this help messages\"},{\"type\":\"text\",\"text\":\" - join : allow you to register for next lunch\"},{\"type\":\"text\",\"text\":\" - group : lets you know your group "
-                        + "and meeting point for lunch\"}]}");
+                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Available commands are :\"},{\"type\":\"text\",\"text\":\" - help : displays this help message\"},{\"type\":\"text\",\"text\":\" - join : allow you to register for next lunch\"},{\"type\":\"text\",\"text\":\" - leave : remove your registration for the next lunch\"},{\"type\":\"text\",\"text\":\" - group : lets you know your group and meeting point for lunch\"}]}");
 
     }
 
