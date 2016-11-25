@@ -228,7 +228,7 @@ public class SchuffleLunchController {
                 reply(replyToken, languageHander.handleLanguageChange(event));
                 break;
             }
-            case "echo": {
+            case "lunch_member": {
                 this.replyText(replyToken, event.getPostbackContent().getData());
                 break;
             }
