@@ -107,11 +107,14 @@ public class MessageService {
             case "Jessica":
                 ret = "https://httpsimage.com/img/Jessica.png";
                 break;
-            case "Leonard":
-                ret = "static/Leonard.jpeg";
-                break;
             case "Sally":
                 ret = "https://httpsimage.com/img/Sally.png";
+                break;
+            case "Boss":
+                ret = "https://httpsimage.com/img/BossLine.png";
+                break;
+            case "Leonard":
+                ret = "https://httpsimage.com/img/Leonard.png";
                 break;
             case "Cony":
             default:
