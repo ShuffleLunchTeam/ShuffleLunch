@@ -152,4 +152,30 @@ public class ApplicationTest {
 //                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Registered Brown for today's lunch.\"}]}");
 
     }
+
+    @Test
+    public void helpCallbackTest() throws Exception {
+
+        server.enqueue(new MockResponse().setBody("{}"));
+
+        String signature = "ECezgIpQNUEp4OSHYd7xGSuFG7e66MLPkCkK1Y28XTU=";
+
+        InputStream resource = getClass().getClassLoader().getResourceAsStream("callback-help.json");
+        byte[] json = ByteStreams.toByteArray(resource);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/callback")
+                                              .header("X-Line-Signature", signature)
+                                              .content(json))
+               .andDo(print())
+               .andExpect(status().isOk());
+
+        // Test request 2
+        RecordedRequest request2 = server.takeRequest(3, TimeUnit.SECONDS);
+        assertThat(request2.getPath()).isEqualTo("/v2/bot/message/reply");
+        assertThat(request2.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
+        assertThat(request2.getBody().readUtf8())
+                .contains(
+                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Available commands are :\"},{\"type\":\"text\",\"text\":\" - help : displays this help messages\"},{\"type\":\"text\",\"text\":\" - join : allow you to register for next lunch\"},{\"type\":\"text\",\"text\":\" - group : lets you know your group and meeting point for lunch\"}]}");
+
+    }
 }
