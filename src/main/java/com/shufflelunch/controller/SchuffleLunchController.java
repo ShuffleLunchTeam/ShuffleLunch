@@ -222,9 +222,11 @@ public class SchuffleLunchController {
             }
             case "lang_ja": {
                 reply(replyToken, languageHander.handleLanguageChange(event));
+                break;
             }
             case "lang_en": {
                 reply(replyToken, languageHander.handleLanguageChange(event));
+                break;
             }
 
             default:

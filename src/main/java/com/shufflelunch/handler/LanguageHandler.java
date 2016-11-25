@@ -58,10 +58,12 @@ public class LanguageHandler {
                 case "lang_ja": {
                     user.setLanguage(Locale.JAPANESE.getLanguage());
                     message = translationService.getTranslation("message.changedLanguage", Locale.JAPANESE.getLanguage());
+                    break;
                 }
                 case "lang_en": {
                     user.setLanguage(Locale.ENGLISH.getLanguage());
                     message = translationService.getTranslation("message.changedLanguage", Locale.ENGLISH.getLanguage());
+                    break;
                 }
 
                 default:
