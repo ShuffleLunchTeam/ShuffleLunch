@@ -65,14 +65,17 @@ public class MessageService {
         String imageUrl = getResourceName(group);
         String language = requestingUser.getLanguage();
 
-        List<Action> actionList = group.getUserList().stream().filter(
-                u -> !u.getMid().equals(requestingUser.getMid())).map(
-                user -> {
+        List<Action> actionList = group
+                .getUserList()
+                .stream()
+                .filter(user -> !user.getMid().equals(requestingUser.getMid()))
+                .map(user -> {
                     String label = translationService.getTranslation("message.group.member",
                                                                      Arrays.asList(user.getName()),
                                                                      language);
                     return new MessageAction(user.getName(), label);
-                }).collect(Collectors.toList());
+                })
+                .collect(Collectors.toList());
         String title = translationService.getTranslation("message.group.title",
                                                          Arrays.asList(group.getName()), language);
         String content = translationService.getTranslation("message.group.content", language);
