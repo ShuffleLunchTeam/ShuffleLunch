@@ -61,23 +61,32 @@ public class GroupServiceTest {
     @Test
     public void calcMemberNumber() {
 
-        assertThat(groupService.calcMemberNumber(5)
+        assertThat(groupService.calcMemberNumber(5, 4)
                 , is(Arrays.asList(5)));
 
-        assertThat(groupService.calcMemberNumber(6)
+        assertThat(groupService.calcMemberNumber(6, 4)
                 , is(Arrays.asList(3, 3)));
 
-        assertThat(groupService.calcMemberNumber(8)
+        assertThat(groupService.calcMemberNumber(8, 4)
                 , is(Arrays.asList(4, 4)));
 
-        assertThat(groupService.calcMemberNumber(9)
+        assertThat(groupService.calcMemberNumber(9, 4)
                 , is(Arrays.asList(3, 3, 3)));
 
-        assertThat(groupService.calcMemberNumber(11)
+        assertThat(groupService.calcMemberNumber(11, 4)
                 , is(Arrays.asList(4, 4, 3)));
 
-        assertThat(groupService.calcMemberNumber(15)
+        assertThat(groupService.calcMemberNumber(15, 4)
                 , is(Arrays.asList(4, 4, 4, 3)));
+
+        assertThat(groupService.calcMemberNumber(15, 6)
+                , is(Arrays.asList(5, 5, 5)));
+
+        assertThat(groupService.calcMemberNumber(7, 6)
+                , is(Arrays.asList(7)));
+
+        assertThat(groupService.calcMemberNumber(9, 6)
+                , is(Arrays.asList(5, 4)));
 
     }
 
@@ -120,7 +129,7 @@ public class GroupServiceTest {
             }
         };
 
-        List<List<User>> result = groupService.grouping(inputList, false);
+        List<List<User>> result = groupService.grouping(inputList, 4, false);
         assertThat(result, is(Arrays.asList(subResult1, subResult2)));
 
     }

@@ -25,8 +25,6 @@ public class GroupService {
     @Autowired
     FireBaseDao fireBaseDao;
 
-    public final static Integer MAX_MEMBER_NUM = 4;
-
     public void addGroup(Group group) {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> groups = mapper.convertValue(group, new TypeReference<Map<String, Object>>() {});
@@ -53,19 +51,19 @@ public class GroupService {
         return fireBaseDao.delete("groups/");
     }
 
-    public List<Integer> calcMemberNumber(int memberSize) {
+    public List<Integer> calcMemberNumber(int memberSize, int defaultSize) {
         int resultNum = memberSize;
 
-        if (resultNum <= 5) {
+        if (resultNum <= defaultSize + 1) {
             return Arrays.asList(resultNum);
         }
 
         List<Integer> memberNum = new ArrayList<>();
 
         while (resultNum > 0) {
-            if (resultNum >= MAX_MEMBER_NUM) {
-                memberNum.add(MAX_MEMBER_NUM);
-                resultNum -= MAX_MEMBER_NUM;
+            if (resultNum >= defaultSize) {
+                memberNum.add(defaultSize);
+                resultNum -= defaultSize;
             } else {
                 memberNum.add(resultNum);
                 resultNum = 0;
@@ -88,13 +86,14 @@ public class GroupService {
     }
 
     boolean validGrouping(List<Integer> memberList) {
+        int max = Collections.max(memberList);
         int min = Collections.min(memberList);
-        return min > MAX_MEMBER_NUM - 2;
+        return max - min < 2;
     }
 
-    public List<List<User>> grouping(List<User> userList, boolean shuffle) {
+    public List<List<User>> grouping(List<User> userList, int defaultSize, boolean shuffle) {
         List<List<User>> result = new ArrayList<>();
-        List<Integer> memberNumList = calcMemberNumber(userList.size());
+        List<Integer> memberNumList = calcMemberNumber(userList.size(), defaultSize);
         if (shuffle) {
             Collections.shuffle(userList);
         }
