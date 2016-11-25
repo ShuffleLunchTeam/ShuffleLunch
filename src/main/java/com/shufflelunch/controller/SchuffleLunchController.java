@@ -191,7 +191,7 @@ public class SchuffleLunchController {
             }
             case "join_no": {
                 // TODO cancel the join?
-                this.replyText(replyToken, "Not joining today");
+                this.reply(replyToken, joinLunchHandler.handleNotJoinConfirmation(event));
                 break;
             }
             default:
@@ -275,12 +275,8 @@ public class SchuffleLunchController {
                 this.reply(replyToken, joinLunchHandler.handleJoinRequest(event, content));
                 break;
             }
-
-            case "subscribe":
-                this.reply(replyToken, joinLunchHandler.handleSubscribe(event, content));
-                break;
-            case "unsubscribe":
-                this.reply(replyToken, joinLunchHandler.handleUnSubscribe(event, content));
+            case "leave":
+                this.reply(replyToken, joinLunchHandler.handleUnSubscribe(event));
                 break;
 
             case "help":

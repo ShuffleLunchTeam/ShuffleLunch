@@ -9,10 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shufflelunch.model.User;
-import com.shufflelunch.service.LunchService;
 import com.shufflelunch.service.UserService;
 
-import com.linecorp.bot.client.LineMessagingService;
 import com.linecorp.bot.model.action.PostbackAction;
 import com.linecorp.bot.model.event.Event;
 import com.linecorp.bot.model.event.message.TextMessageContent;
@@ -28,9 +26,6 @@ public class JoinLunchHandler {
     private UserService userService;
 
     @Autowired
-    private LunchService lunchService;
-
-    @Autowired
     private ParticipantService participantService;
 
     public Message handleJoinConfirmation(Event event)
@@ -39,6 +34,7 @@ public class JoinLunchHandler {
         Optional<User> maybeUser = userService.getUser(userId);
 
         if (!maybeUser.isPresent()) {
+            // TODO add to users DB
             return new TextMessage("Sorry, you are not a member of ShuffleLunch");
         }
 
@@ -52,6 +48,27 @@ public class JoinLunchHandler {
         return new TextMessage("Added " + user.getName() + " to the participant list.");
     }
 
+    public Message handleNotJoinConfirmation(Event event)
+            throws IOException {
+        String userId = event.getSource().getUserId();
+        Optional<User> maybeUser = userService.getUser(userId);
+
+        if (!maybeUser.isPresent()) {
+            // TODO add to users DB
+            return new TextMessage("Sorry, you are not a member of ShuffleLunch");
+        }
+
+        User user = maybeUser.get();
+        Optional<Participant> participant = participantService.getParticipant(user);
+
+        if (!participant.isPresent()) {
+            return new TextMessage("You didn't sign up to lunch today.");
+        }
+
+        participantService.deleteParticipant(participant.get());
+        return new TextMessage("Removed " + user.getName() + " from the participant list.");
+    }
+
     public Message handleJoinRequest(Event event, TextMessageContent content) {
         ConfirmTemplate confirmTemplate = new ConfirmTemplate(
                 "Join Shuffle Lunch?",
@@ -61,51 +78,8 @@ public class JoinLunchHandler {
         return new TemplateMessage("Join Shuffle Lunch?", confirmTemplate);
     }
 
-    public Message handleSubscribe(Event event, TextMessageContent content) {
+    public Message handleUnSubscribe(Event event) throws IOException {
         //get user
-        Optional<User> user = userService.getUser(event.getSource().getUserId());
-        if (user.isPresent()) {
-            if (lunchService.hasSuscribedToLunch(user.get())) {
-                return alreadySuscribed();
-            } else {
-                lunchService.subscribeToLunch(user.get());
-                return suscribed();
-            }
-        } else {
-            return new TextMessage("Unknown User");
-        }
-    }
-
-    public Message handleUnSubscribe(Event event, TextMessageContent content) {
-        //get user
-        Optional<User> user = userService.getUser(event.getSource().getUserId());
-        if (user.isPresent()) {
-
-            if (lunchService.hasSuscribedToLunch(user.get())) {
-                return notSuscribed();
-            } else {
-                lunchService.unSubscribeToLunch(user.get());
-                return unSuscribed();
-
-            }
-        } else {
-            return new TextMessage("Unknown User");
-        }
-    }
-
-    private Message notSuscribed() {
-        return new TextMessage("You did not subscribed for Today");
-    }
-
-    private Message alreadySuscribed() {
-        return new TextMessage("You already subscribed to lunch for Today");
-    }
-
-    private Message suscribed() {
-        return new TextMessage("You subscribed for today's lunch");
-    }
-
-    private Message unSuscribed() {
-        return new TextMessage("You unsubscribed for today's lunch");
+        return handleNotJoinConfirmation(event);
     }
 }
