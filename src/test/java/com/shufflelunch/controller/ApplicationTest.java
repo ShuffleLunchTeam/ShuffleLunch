@@ -117,6 +117,6 @@ public class ApplicationTest {
         assertThat(request3.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
         assertThat(request3.getBody().readUtf8())
                 .isEqualTo(
-                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Got followed event\"}]}");
+                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Hello Brown, welcome to Shuffle Lunch!\\nDo you want want to join today?\\n\"}]}");
     }
 }
