@@ -43,39 +43,28 @@ public class GroupHandler {
     @Autowired
     private ParticipantService participantService;
 
-    public List<Message> handleGroupRequest(Event event)
-            throws IOException {
+    public List<Message> handleGroupRequest(Event event) throws IOException {
 
-        Optional<User> user = userService.getUser(event.getSource().getUserId());
-        if (user.isPresent()) {
-            final User actualUser = user.get();
-            Optional<Participant> participant = participantService.getParticipant(actualUser);
-            if (participant.isPresent()) {
-                Optional<Group> group = groupService.getGroupForUser(actualUser);
-                if (group.isPresent()) {
-                    Group g = group.get();
-
-                    return ImmutableList.of(messageService.getFixedGroupRequest(actualUser, g));
-//                    List<Message> ret = new ArrayList<>();
-//                    ret.add(new TextMessage(t.getTranslation("group.info", ImmutableList.of(g.getName()),
-//                                                             actualUser.getLanguage())));
-//                    g.getUserList().forEach(u -> {
-//                        if (u.getMid() != actualUser.getMid()) {
-//                            ret.add(new TextMessage(" - " + u.getName()));
-//                        }
-//                    });
-//                    return ret;
-                } else {
-                    return ImmutableList.of(
-                            new TextMessage(t.getTranslation("group.not.shuffled", actualUser.getLanguage())));
-                }
-            } else {
-                return ImmutableList.of(
-                        new TextMessage(t.getTranslation("group.not.registered", actualUser.getLanguage())));
-            }
-        } else {
+        Optional<User> maybeUser = userService.getUser(event.getSource().getUserId());
+        if (!maybeUser.isPresent()) {
             return ImmutableList.of(new TextMessage("Unknown user"));
         }
+
+        User user = maybeUser.get();
+        Optional<Participant> participant = participantService.getParticipant(user);
+        if (!participant.isPresent()) {
+            return ImmutableList.of(
+                    new TextMessage(t.getTranslation("group.not.registered", user.getLanguage())));
+        }
+
+        Optional<Group> maybeGroup = groupService.getGroupForUser(user);
+        if (!maybeGroup.isPresent()) {
+            return ImmutableList.of(
+                    new TextMessage(t.getTranslation("group.not.shuffled", user.getLanguage())));
+        }
+
+        Group group = maybeGroup.get();
+        return ImmutableList.of(messageService.getFixedGroupRequest(user, group));
     }
 
     public Message handleShuffleGroup() {

@@ -228,6 +228,10 @@ public class SchuffleLunchController {
                 reply(replyToken, languageHander.handleLanguageChange(event));
                 break;
             }
+            case "echo": {
+                this.replyText(replyToken, event.getPostbackContent().getData());
+                break;
+            }
 
             default:
                 this.replyText(replyToken, "Got postback " + event.getPostbackContent().getData());

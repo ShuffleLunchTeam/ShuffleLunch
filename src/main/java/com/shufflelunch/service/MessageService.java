@@ -73,7 +73,7 @@ public class MessageService {
                     String label = translationService.getTranslation("message.group.member",
                                                                      Arrays.asList(user.getName()),
                                                                      language);
-                    return new MessageAction(user.getName(), label);
+                    return new PostbackAction("echo", label);
                 })
                 .collect(Collectors.toList());
         String title = translationService.getTranslation("message.group.title",

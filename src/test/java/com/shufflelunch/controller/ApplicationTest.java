@@ -138,7 +138,7 @@ public class ApplicationTest {
         assertThat(request2.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
         String body = request2.getBody().readUtf8();
         assertThat(body)
-                .contains("{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Brownを参加者リストに加えました。\"}]}");
+                .contains("{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Brownさんを参加者リストに加えました。\"}]}");
 
     }
 
@@ -196,7 +196,7 @@ public class ApplicationTest {
         String body = recordedRequest.getBody().readUtf8();
         assertThat(body)
                 .contains(
-                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"こんにちは Brown, ようこそシャッフルランチへ\"}]}");
+                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"こんにちは Brownさん, ようこそシャッフルランチへ\"}]}");
     }
 
     @Test
