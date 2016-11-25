@@ -7,9 +7,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.InputStream;
+import java.sql.Time;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import com.shufflelunch.model.Participant;
+import com.shufflelunch.service.ParticipantService;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,6 +53,9 @@ public class ApplicationTest {
 
     @MockBean
     ProfileService profileService;
+
+    @MockBean
+    ParticipantService participantService;
 
     private MockMvc mockMvc;
     private static MockWebServer server;
@@ -98,6 +104,7 @@ public class ApplicationTest {
 
         Optional<User> user = Optional.of(new User("sjkghfjhsg", "Brown"));
         when(userService.getUser(any())).thenReturn(user);
+        when(participantService.getParticipant(any())).thenReturn(Optional.empty());
 
         server.enqueue(new MockResponse().setBody("{}"));
 
@@ -121,6 +128,32 @@ public class ApplicationTest {
                         "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Added Brown to the participant list.\"}]}");
 
     }
+
+    @Test
+    public void confirmAlreadyJoinedTest() throws Exception {
+
+        Optional<User> user = Optional.of(new User("sjkghfjhsg", "Brown"));
+        when(userService.getUser(any())).thenReturn(user);
+        when(participantService.getParticipant(any())).thenReturn(Optional.of(new Participant(user.get())));
+
+        server.enqueue(new MockResponse().setBody("{}"));
+
+        String signature = "ECezgIpQNUEp4OSHYd7xGSuFG7e66MLPkCkK1Y28XTU=";
+
+        InputStream resource = getClass().getClassLoader().getResourceAsStream("callback-confirm.json");
+        byte[] json = ByteStreams.toByteArray(resource);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/callback")
+                .header("X-Line-Signature", signature)
+                .content(json))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        RecordedRequest request = server.takeRequest(3, TimeUnit.SECONDS);
+        assertThat(request.getBody().readUtf8()).contains(
+                "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"You already joined today's lunch\"}]}");
+    }
+
 
     @Test
     public void followCallbackTest() throws Exception {
