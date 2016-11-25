@@ -3,14 +3,16 @@ package com.shufflelunch.handler;
 import java.io.IOException;
 import java.util.Optional;
 
-import com.google.common.collect.ImmutableList;
-import com.shufflelunch.model.Participant;
-import com.shufflelunch.service.ParticipantService;
-import com.shufflelunch.service.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.ImmutableList;
+import com.shufflelunch.model.Group;
+import com.shufflelunch.model.Participant;
 import com.shufflelunch.model.User;
+import com.shufflelunch.service.GroupService;
+import com.shufflelunch.service.ParticipantService;
+import com.shufflelunch.service.TranslationService;
 import com.shufflelunch.service.UserService;
 
 import com.linecorp.bot.model.action.PostbackAction;
@@ -32,6 +34,9 @@ public class JoinLunchHandler {
     @Autowired
     private TranslationService translationService;
 
+    @Autowired
+    private GroupService groupService;
+
     public Message handleJoinConfirmation(Event event)
             throws IOException {
         String userId = event.getSource().getUserId();
@@ -49,7 +54,8 @@ public class JoinLunchHandler {
         }
 
         participantService.addParticipant(new Participant(user));
-        String message = translationService.getTranslation("join.added", ImmutableList.of(user.getName()), user.getLanguage());
+        String message = translationService.getTranslation("join.added", ImmutableList.of(user.getName()),
+                                                           user.getLanguage());
         return new TextMessage(message);
     }
 
@@ -68,6 +74,11 @@ public class JoinLunchHandler {
 
         if (!participant.isPresent()) {
             return new TextMessage(translationService.getTranslation("join.not", user.getLanguage()));
+        }
+
+        Optional<Group> group = groupService.getMyGroup(user);
+        if (!group.isPresent()) {
+            groupService.deleteUser(group.get(), user);
         }
 
         participantService.deleteParticipant(participant.get());
@@ -89,7 +100,8 @@ public class JoinLunchHandler {
                 new PostbackAction("Yes", "join_yes"),
                 new PostbackAction("No", "join_no")
         );
-        return new TemplateMessage(translationService.getTranslation("join.opt_in", user.getLanguage()), confirmTemplate);
+        return new TemplateMessage(translationService.getTranslation("join.opt_in", user.getLanguage()),
+                                   confirmTemplate);
     }
 
     public Message handleUnSubscribe(Event event) throws IOException {

@@ -122,6 +122,11 @@ public class GroupService {
         return fireBaseDao.delete("groups/");
     }
 
+    public void deleteUser(Group group, User user) {
+        group.getUserList().remove(user);
+        addGroup(group);
+    }
+
     public List<Integer> calcMemberNumber(int memberSize, int defaultSize) {
         int resultNum = memberSize;
 
