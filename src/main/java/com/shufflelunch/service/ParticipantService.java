@@ -24,7 +24,7 @@ public class ParticipantService {
     }
 
     public Optional<Participant> getParticipant(User user) {
-        return fireBaseDao.read("users/" + user.getMid(), Participant.class);
+        return fireBaseDao.read("participants/" + user.getMid(), Participant.class);
     }
 
     public void addParticipant(Participant participant) {
