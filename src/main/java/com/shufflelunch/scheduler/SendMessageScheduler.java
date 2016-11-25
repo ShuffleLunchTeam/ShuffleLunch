@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.shufflelunch.service.GroupService;
 import com.shufflelunch.service.MessagePushService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,16 @@ public class SendMessageScheduler {
 
     @Autowired
     MessagePushService messagePushService;
+
+    @Autowired
+    GroupService groupService;
+
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Tokyo")
+    public void clearGroupName() {
+        log.info("start removeGroupNames");
+        groupService.clearGroupNames();
+        log.info("end clearGroupNames");
+    }
 
     //I want scheduled without public holiday
     //@Scheduled(cron = "0 0 12 * * 1-5", zone = "Asia/Tokyo")
