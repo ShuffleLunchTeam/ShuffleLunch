@@ -64,7 +64,8 @@ public class MessageService {
     public Message getFixedGroupRequest(Group group, String language) {
 //        String imageUrl = createUri(getResourceName(group));
         String imageUrl =
-                "http://vignette2.wikia.nocookie.net/line/images/b/bb/2015-brown.png/revision/latest/scale-to-width-down/270?cb=20150808131630";
+                "https://obs.line-scdn.net/0m0e742a07ef54370037322142617e7d722e2f23397a0b6c0f4226747c352e3a376133313731373c0f3d2f37363c2f6e6765774460771b6b013e3d3734/large";
+
         List<Action> actionList = group.getUserList().stream().map(
                 user -> {
                     String label = translationService.getTranslation("message.group.member",
