@@ -77,7 +77,7 @@ public class JoinLunchHandler {
         }
 
         Optional<Group> group = groupService.getMyGroup(user);
-        if (!group.isPresent()) {
+        if (group.isPresent()) {
             groupService.deleteUser(group.get(), user);
         }
 
