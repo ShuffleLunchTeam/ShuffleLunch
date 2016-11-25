@@ -35,4 +35,12 @@ public class UserService {
         fireBaseDao.update("users/" + user.getMid(), users);
     }
 
+    public boolean deleteUser(User user) {
+        return deleteUser(user.getMid());
+    }
+
+    public boolean deleteUser(String userId) {
+        return fireBaseDao.delete("users/" + userId);
+    }
+
 }

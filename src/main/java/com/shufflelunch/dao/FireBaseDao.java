@@ -92,4 +92,35 @@ public class FireBaseDao {
             throw new RuntimeException(e);
         }
     }
+
+    public boolean delete(String dataPoint) {
+        final boolean[] result = { false };
+        try {
+            DatabaseReference databaseReference = db.getReference(dataPoint);
+            CountDownLatch lock = new CountDownLatch(1);
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        dataSnapshot.getRef().removeValue((databaseError, databaseReference1) -> {
+                            result[0] = true;
+                            lock.countDown();
+                        });
+                    } else {
+                        lock.countDown();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    log.error("Failed to read data.", error);
+                    lock.countDown();
+                }
+            });
+            lock.await();
+            return result[0];
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
