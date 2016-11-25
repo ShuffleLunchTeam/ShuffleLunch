@@ -45,24 +45,28 @@ public class GroupHandler {
 
         Optional<User> user = userService.getUser(event.getSource().getUserId());
         if (user.isPresent()) {
-            Optional<Participant> participant = participantService.getParticipant(user.get());
+            final User actualUser = user.get();
+            Optional<Participant> participant = participantService.getParticipant(actualUser);
             if (participant.isPresent()) {
-                Optional<Group> group = groupService.getGroupForUser(user.get());
+                Optional<Group> group = groupService.getGroupForUser(actualUser);
                 if (group.isPresent()) {
                     Group g = group.get();
                     List<Message> ret = new ArrayList<>();
-                    ret.add(new TextMessage("You are in group : " + g.getName() + "　with the users :"));
+                    ret.add(new TextMessage(t.getTranslation("group.info", ImmutableList.of(g.getName()),
+                                                             actualUser.getLanguage())));
                     g.getUserList().forEach(u -> {
-                        if (u.getMid() != user.get().getMid()) {
+                        if (u.getMid() != actualUser.getMid()) {
                             ret.add(new TextMessage(" - " + u.getName()));
                         }
                     });
                     return ret;
                 } else {
-                    return ImmutableList.of(new TextMessage("Group have not been shuffled yet"));
+                    return ImmutableList.of(
+                            new TextMessage(t.getTranslation("group.not.shuffled", actualUser.getLanguage())));
                 }
             } else {
-                return ImmutableList.of(new TextMessage("Not registered in any group"));
+                return ImmutableList.of(
+                        new TextMessage(t.getTranslation("group.not.registered", actualUser.getLanguage())));
             }
         } else {
             return ImmutableList.of(new TextMessage("Unknown user"));
@@ -81,6 +85,6 @@ public class GroupHandler {
             groups.forEach(users -> groupService.addGroup(groupService.createGroup(users)));
         }
 
-        return new TextMessage("schuffled !");
+        return new TextMessage("shuffled !");
     }
 }

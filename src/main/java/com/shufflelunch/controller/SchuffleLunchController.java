@@ -330,7 +330,7 @@ public class SchuffleLunchController {
                 reply(replyToken, groupHandler.handleGroupRequest(event));
                 break;
 
-            case "schuffle":
+            case "shuffle":
                 reply(replyToken, groupHandler.handleShuffleGroup());
                 break;
             /////////////
