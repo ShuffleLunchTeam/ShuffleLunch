@@ -55,7 +55,7 @@ public class GroupHandler {
                 if (group.isPresent()) {
                     Group g = group.get();
 
-                    return ImmutableList.of(messageService.getFixedGroupRequest(g, actualUser.getLanguage()));
+                    return ImmutableList.of(messageService.getFixedGroupRequest(actualUser, g));
 //                    List<Message> ret = new ArrayList<>();
 //                    ret.add(new TextMessage(t.getTranslation("group.info", ImmutableList.of(g.getName()),
 //                                                             actualUser.getLanguage())));

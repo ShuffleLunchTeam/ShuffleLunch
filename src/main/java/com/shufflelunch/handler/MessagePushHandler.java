@@ -34,7 +34,7 @@ public class MessagePushHandler {
             userService.getAllUserList().get().stream().filter(
                     user -> groupService.getMyGroup(user).isPresent()).forEach(
                     user -> messageService.pushMessage(user.getMid(), messageService
-                            .getFixedGroupRequest(groupService.getMyGroup(user).get(), user.getLanguage())));
+                            .getFixedGroupRequest(user, groupService.getMyGroup(user).get())));
         }
     }
 }

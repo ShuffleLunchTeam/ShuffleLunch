@@ -61,11 +61,12 @@ public class MessageService {
         return new TemplateMessage("[Join message] Please check on mobile.", confirmTemplate);
     }
 
-    public Message getFixedGroupRequest(Group group, String language) {
-//        String imageUrl = createUri(getResourceName(group));
+    public Message getFixedGroupRequest(User requestingUser, Group group) {
         String imageUrl = getResourceName(group);
+        String language = requestingUser.getLanguage();
 
-        List<Action> actionList = group.getUserList().stream().map(
+        List<Action> actionList = group.getUserList().stream().filter(
+                u -> u.getMid() != requestingUser.getMid()).map(
                 user -> {
                     String label = translationService.getTranslation("message.group.member",
                                                                      Arrays.asList(user.getName()),
