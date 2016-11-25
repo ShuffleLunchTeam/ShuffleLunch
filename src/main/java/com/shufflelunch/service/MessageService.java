@@ -70,10 +70,10 @@ public class MessageService {
                 .stream()
                 .filter(user -> !user.getMid().equals(requestingUser.getMid()))
                 .map(user -> {
-                    String label = translationService.getTranslation("message.group.member",
+                    String data = translationService.getTranslation("message.group.member",
                                                                      Arrays.asList(user.getName()),
                                                                      language);
-                    return new PostbackAction("echo", label);
+                    return new PostbackAction(user.getName(), data, user.getName());
                 })
                 .collect(Collectors.toList());
         String title = translationService.getTranslation("message.group.title",
