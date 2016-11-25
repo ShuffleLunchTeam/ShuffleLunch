@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.InputStream;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +29,7 @@ import com.shufflelunch.model.Participant;
 import com.shufflelunch.model.User;
 import com.shufflelunch.service.ParticipantService;
 import com.shufflelunch.service.ProfileService;
+import com.shufflelunch.service.TranslationService;
 import com.shufflelunch.service.UserService;
 
 import com.linecorp.bot.model.profile.UserProfileResponse;
@@ -57,6 +59,9 @@ public class ApplicationTest {
 
     @MockBean
     ParticipantService participantService;
+
+    @Autowired
+    TranslationService translationService;
 
     private MockMvc mockMvc;
     private static MockWebServer server;
@@ -228,7 +233,16 @@ public class ApplicationTest {
         assertThat(request2.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
         assertThat(request2.getBody().readUtf8())
                 .contains(
-                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Available commands are :\"},{\"type\":\"text\",\"text\":\" - help : displays this help messages\"},{\"type\":\"text\",\"text\":\" - join : allow you to register for next lunch\"},{\"type\":\"text\",\"text\":\" - group : lets you know your group and meeting point for lunch\"}]}");
+                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Available commands are :\"},{\"type\":\"text\",\"text\":\" - help : displays "
+                        + "this help messages\"},{\"type\":\"text\",\"text\":\" - join : allow you to register for next lunch\"},{\"type\":\"text\",\"text\":\" - group : lets you know your group "
+                        + "and meeting point for lunch\"}]}");
 
+    }
+
+    @Test
+    public void translationTest() {
+        Locale.setDefault(Locale.JAPANESE);
+        assertThat(translationService.getTranslation("welcome", Locale.JAPANESE)).isEqualTo("こんにちは！");
+        assertThat(translationService.getTranslation("welcome", Locale.ENGLISH)).isEqualTo("Welcome!");
     }
 }
