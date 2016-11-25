@@ -33,6 +33,7 @@ public class DebugHandler {
         List<Message> ret = new ArrayList<>();
         ret.add(userList());
         ret.add(participantList());
+        ret.add(groupList());
 
         return ret;
     }

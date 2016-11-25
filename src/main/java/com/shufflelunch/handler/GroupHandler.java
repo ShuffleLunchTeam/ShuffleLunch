@@ -51,13 +51,15 @@ public class GroupHandler {
                 if (group.isPresent()) {
                     Group g = group.get();
                     List<Message> ret = new ArrayList<>();
-                    ret.add(new TextMessage("You are in group : " + g.getName() + "with the users :"));
+                    ret.add(new TextMessage("You are in group : " + g.getName() + "　with the users :"));
                     g.getUserList().forEach(u -> {
                         if (u.getMid() != user.get().getMid()) {
                             ret.add(new TextMessage(" - " + u.getName()));
                         }
                     });
                     return ret;
+                } else {
+                    return ImmutableList.of(new TextMessage("Group have not been shuffled yet"));
                 }
             } else {
                 return ImmutableList.of(new TextMessage("Not registered in any group"));
@@ -65,8 +67,6 @@ public class GroupHandler {
         } else {
             return ImmutableList.of(new TextMessage("Unknown user"));
         }
-
-        return null;
     }
 
     public Message handleShuffleGroup() {
