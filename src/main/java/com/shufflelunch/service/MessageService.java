@@ -63,8 +63,7 @@ public class MessageService {
 
     public Message getFixedGroupRequest(Group group, String language) {
 //        String imageUrl = createUri(getResourceName(group));
-        String imageUrl =
-                "https://obs.line-scdn.net/0m0e742a07ef54370037322142617e7d722e2f23397a0b6c0f4226747c352e3a376133313731373c0f3d2f37363c2f6e6765774460771b6b013e3d3734/large";
+        String imageUrl = getResourceName(group);
 
         List<Action> actionList = group.getUserList().stream().map(
                 user -> {
@@ -91,24 +90,24 @@ public class MessageService {
     }
 
     private String getResourceName(Group group) {
-        String ret = "static/cony.jpg";
+        String ret = "https://httpsimage.com/img/cony.jpg";
 
         String groupName = group.getName();
         switch (groupName) {
             case "Brown":
-                ret = "static/Brown.png";
+                ret = "https://httpsimage.com/img/Brown.png";
                 break;
             case "James":
-                ret = "static/James.png";
+                ret = "https://httpsimage.com/img/James.png";
                 break;
             case "Jessica":
-                ret = "static/Jessica.png";
+                ret = "https://httpsimage.com/img/Jessica.png";
                 break;
             case "Leonard":
                 ret = "static/Leonard.jpeg";
                 break;
             case "Sally":
-                ret = "static/Sally.png";
+                ret = "https://httpsimage.com/img/Sally.png";
                 break;
             case "Cony":
             default:
