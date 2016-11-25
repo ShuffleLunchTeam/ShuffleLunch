@@ -1,5 +1,6 @@
 package com.shufflelunch.handler;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,19 +10,52 @@ import com.shufflelunch.model.User;
 import com.shufflelunch.service.LunchService;
 import com.shufflelunch.service.UserService;
 
+import com.linecorp.bot.client.LineMessagingService;
+import com.linecorp.bot.model.action.PostbackAction;
 import com.linecorp.bot.model.event.Event;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
+import com.linecorp.bot.model.message.TemplateMessage;
 import com.linecorp.bot.model.message.TextMessage;
+import com.linecorp.bot.model.message.template.ConfirmTemplate;
+import com.linecorp.bot.model.profile.UserProfileResponse;
+
+import retrofit2.Response;
 
 @Component
-public class SubscribeLunchHandler {
+public class JoinLunchHandler {
 
     @Autowired
     private UserService userService;
 
     @Autowired
     private LunchService lunchService;
+
+    public Message handleJoinConfirmation(Event event, LineMessagingService lineMessagingService)
+            throws IOException {
+        String userId = event.getSource().getUserId();
+        String userName = "you";
+        if (userId != null) {
+            Response<UserProfileResponse> response = lineMessagingService
+                    .getProfile(userId)
+                    .execute();
+            if (response.isSuccessful()) {
+                UserProfileResponse profiles = response.body();
+                userName = profiles.getDisplayName();
+            }
+        }
+
+        return new TextMessage("Registered " + userName + " for today's lunch.");
+    }
+
+    public Message handleJoinRequest(Event event, TextMessageContent content) {
+        ConfirmTemplate confirmTemplate = new ConfirmTemplate(
+                "Join Shuffle Lunch?",
+                new PostbackAction("Yes", "join_yes"),
+                new PostbackAction("No", "join_no")
+        );
+        return new TemplateMessage("Join Shuffle Lunch?", confirmTemplate);
+    }
 
     public Message handleSubscribe(Event event, TextMessageContent content) {
         //get user

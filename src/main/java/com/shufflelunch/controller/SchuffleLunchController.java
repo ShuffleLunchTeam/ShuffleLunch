@@ -18,7 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.google.common.io.ByteStreams;
 import com.shufflelunch.Application;
-import com.shufflelunch.handler.SubscribeLunchHandler;
+import com.shufflelunch.handler.JoinLunchHandler;
 import com.shufflelunch.model.User;
 import com.shufflelunch.service.MessageService;
 import com.shufflelunch.service.UserService;
@@ -75,12 +75,12 @@ import retrofit2.Response;
 
 @Slf4j
 @LineMessageHandler
-public class HelloController {
+public class SchuffleLunchController {
 
     @Autowired
     private LineMessagingService lineMessagingService;
     @Autowired
-    private SubscribeLunchHandler subscribeLunchHandler;
+    private JoinLunchHandler joinLunchHandler;
 
     @Autowired
     private MessageService messageService;
@@ -203,18 +203,8 @@ public class HelloController {
 
         switch (event.getPostbackContent().getData()) {
             case "join_yes": {
-                String userId = event.getSource().getUserId();
-                String userName = "you";
-                if (userId != null) {
-                    Response<UserProfileResponse> response = lineMessagingService
-                            .getProfile(userId)
-                            .execute();
-                    if (response.isSuccessful()) {
-                        UserProfileResponse profiles = response.body();
-                        userName = profiles.getDisplayName();
-                    }
-                }
-                this.replyText(replyToken, "Registered " + userName + " for today's lunch.");
+                this.reply(replyToken,
+                           joinLunchHandler.handleJoinConfirmation(event, lineMessagingService));
                 break;
             }
             case "join_no": {
@@ -299,21 +289,15 @@ public class HelloController {
             // ShuffleLunch //
             //////////////////
             case "join": {
-                ConfirmTemplate confirmTemplate = new ConfirmTemplate(
-                        "Join Shuffle Lunch?",
-                        new PostbackAction("Yes", "join_yes"),
-                        new PostbackAction("No", "join_no")
-                );
-                TemplateMessage templateMessage = new TemplateMessage("Join Shuffle Lunch?", confirmTemplate);
-                this.reply(replyToken, templateMessage);
+                this.reply(replyToken, joinLunchHandler.handleJoinRequest(event, content));
                 break;
             }
 
             case "subscribe":
-                this.reply(replyToken, subscribeLunchHandler.handleSubscribe(event, content));
+                this.reply(replyToken, joinLunchHandler.handleSubscribe(event, content));
                 break;
             case "unsubscribe":
-                this.reply(replyToken, subscribeLunchHandler.handleUnSubscribe(event, content));
+                this.reply(replyToken, joinLunchHandler.handleUnSubscribe(event, content));
                 break;
 
             /////////////

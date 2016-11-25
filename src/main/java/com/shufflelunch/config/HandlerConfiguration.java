@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-import com.shufflelunch.handler.SubscribeLunchHandler;
+import com.shufflelunch.handler.JoinLunchHandler;
 
 import com.linecorp.bot.client.LineSignatureValidator;
 
@@ -14,8 +14,8 @@ import lombok.NonNull;
 public class HandlerConfiguration {
 
     @Bean
-    public SubscribeLunchHandler subscribeLunchHandler() {
-        return new SubscribeLunchHandler();
+    public JoinLunchHandler subscribeLunchHandler() {
+        return new JoinLunchHandler();
     }
 
     @Bean

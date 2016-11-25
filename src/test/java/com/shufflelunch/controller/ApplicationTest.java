@@ -81,6 +81,7 @@ public class ApplicationTest {
 
         server.enqueue(new MockResponse().setBody("{}"));
         server.enqueue(new MockResponse().setBody("{}"));
+        server.enqueue(new MockResponse().setBody("{}"));
 
         String signature = "ECezgIpQNUEp4OSHYd7xGSuFG7e66MLPkCkK1Y28XTU=";
 
