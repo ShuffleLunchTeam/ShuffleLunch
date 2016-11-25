@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class User {
     String mid;
     String name;
+    String language;
 }

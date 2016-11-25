@@ -6,6 +6,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,9 +43,9 @@ import com.shufflelunch.model.User;
         })
 @WebAppConfiguration
 @TestExecutionListeners({
-                                DependencyInjectionTestExecutionListener.class,
-                                DirtiesContextTestExecutionListener.class,
-                        })
+        DependencyInjectionTestExecutionListener.class,
+        DirtiesContextTestExecutionListener.class,
+})
 public class GroupServiceTest {
 
     @InjectMocks
@@ -92,13 +93,13 @@ public class GroupServiceTest {
 
     @Test
     public void grouping() {
-        User user1 = new User("1", "name1");
-        User user2 = new User("2", "name2");
-        User user3 = new User("3", "name3");
-        User user4 = new User("4", "name4");
-        User user5 = new User("5", "name5");
-        User user6 = new User("6", "name6");
-        User user7 = new User("7", "name7");
+        User user1 = new User("1", "name1", Locale.JAPANESE.getLanguage());
+        User user2 = new User("2", "name2", Locale.JAPANESE.getLanguage());
+        User user3 = new User("3", "name3", Locale.JAPANESE.getLanguage());
+        User user4 = new User("4", "name4", Locale.JAPANESE.getLanguage());
+        User user5 = new User("5", "name5", Locale.JAPANESE.getLanguage());
+        User user6 = new User("6", "name6", Locale.JAPANESE.getLanguage());
+        User user7 = new User("7", "name7", Locale.JAPANESE.getLanguage());
 
         List<User> inputList = new ArrayList<User>() {
             {

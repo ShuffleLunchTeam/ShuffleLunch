@@ -13,18 +13,14 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import com.shufflelunch.handler.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.google.common.io.ByteStreams;
 import com.shufflelunch.Application;
-import com.shufflelunch.handler.DebugHandler;
-import com.shufflelunch.handler.FollowLunchHandler;
-import com.shufflelunch.handler.HelpHandler;
-import com.shufflelunch.handler.JoinLunchHandler;
 import com.shufflelunch.model.User;
-import com.shufflelunch.service.MessageService;
 import com.shufflelunch.service.UserService;
 
 import com.linecorp.bot.client.LineMessagingService;
@@ -97,10 +93,10 @@ public class SchuffleLunchController {
     private DebugHandler debugHandler;
 
     @Autowired
-    private MessageService messageService;
+    private UserService userService;
 
     @Autowired
-    private UserService userService;
+    private LanguageHandler languageHander;
 
     @EventMapping
     public void handleFollowEvent(FollowEvent event) throws IOException {
@@ -304,6 +300,10 @@ public class SchuffleLunchController {
 
             case "help":
                 reply(replyToken, helpHandler.handleHelp());
+                break;
+
+            case "language":
+                reply(replyToken, languageHander.handleLanguage());
                 break;
 
             case "debug":

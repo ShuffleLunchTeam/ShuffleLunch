@@ -86,6 +86,24 @@ public class GroupService {
         return fireBaseDao.read("groups/" + name, Group.class);
     }
 
+    public Optional<Group> getMyGroup(User targetUser) {
+        return getMyGroup(targetUser.getMid());
+    }
+
+    public Optional<Group> getMyGroup(String mid) {
+        Optional<List<Group>> groupList = getAllGroupList();
+        if (groupList.isPresent()) {
+            for (Group group : groupList.get()) {
+                for (User user : group.getUserList()) {
+                    if (mid.equals(user.getMid())) {
+                        return Optional.of(group);
+                    }
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
     public Optional<List<Group>> getAllGroupList() {
         return fireBaseDao.readList("groups", Group.class);
     }
