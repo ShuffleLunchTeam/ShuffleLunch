@@ -26,4 +26,8 @@ public class Group {
     public void addUser(User user) {
         userList.add(user);
     }
+
+    public void addUserList(List<User> list) {
+        userList.addAll(list);
+    }
 }
