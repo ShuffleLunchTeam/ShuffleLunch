@@ -182,11 +182,11 @@ public class SchuffleLunchController {
 
         switch (event.getPostbackContent().getData()) {
             case "join_yes": {
-                this.reply(replyToken,
-                           joinLunchHandler.handleJoinConfirmation(event, lineMessagingService));
+                this.reply(replyToken, joinLunchHandler.handleJoinConfirmation(event));
                 break;
             }
             case "join_no": {
+                // TODO cancel the join?
                 this.replyText(replyToken, "Not joining today");
                 break;
             }

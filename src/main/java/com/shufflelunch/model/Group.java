@@ -16,7 +16,7 @@ public class Group {
     @NonNull
     String name;
 
-    Language language = Language.JAPANESS;
+    Language language = Language.JAPANESE;
 
     @Setter(AccessLevel.PRIVATE)
     List<User> userList = new ArrayList<>();

@@ -2,7 +2,7 @@ package com.shufflelunch.model;
 
 public enum Language {
     ENGLISH,
-    JAPANESS,
+    JAPANESE,
     KOREAN,
     CHINESES
 }

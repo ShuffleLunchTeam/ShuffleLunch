@@ -11,5 +11,5 @@ public class Participant {
     @NonNull
     User user;
 
-    Language language = Language.JAPANESS;
+    Language language = Language.JAPANESE;
 }
