@@ -25,6 +25,8 @@ public class GroupService {
     @Autowired
     FireBaseDao fireBaseDao;
 
+    public final static Integer MAX_MEMBER_NUM = 4;
+
     public void addGroup(Group group) {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> groups = mapper.convertValue(group, new TypeReference<Map<String, Object>>() {});
@@ -61,9 +63,9 @@ public class GroupService {
         List<Integer> memberNum = new ArrayList<>();
 
         while (resultNum > 0) {
-            if (resultNum >= 4) {
-                memberNum.add(4);
-                resultNum -= 4;
+            if (resultNum >= MAX_MEMBER_NUM) {
+                memberNum.add(MAX_MEMBER_NUM);
+                resultNum -= MAX_MEMBER_NUM;
             } else {
                 memberNum.add(resultNum);
                 resultNum = 0;
@@ -86,9 +88,8 @@ public class GroupService {
     }
 
     boolean validGrouping(List<Integer> memberList) {
-        int max = Collections.max(memberList);
         int min = Collections.min(memberList);
-        return max - min < 2;
+        return min > MAX_MEMBER_NUM - 2;
     }
 
     public List<List<User>> grouping(List<User> userList, boolean shuffle) {
