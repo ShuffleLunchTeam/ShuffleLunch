@@ -25,10 +25,8 @@ public class TranslationService {
     }
 
     public String getTranslation(String key, String language) {
-
-        log.info("getTranslation:{}", language);
         InputStream utf8in;
-        if (language == Locale.ENGLISH.getLanguage()) {
+        if (Locale.ENGLISH.getLanguage().equals(language)) {
             utf8in = getClass().getClassLoader().getResourceAsStream("translation_" + language + ".properties");
         } else {
             utf8in = getClass().getClassLoader().getResourceAsStream("translation.properties");

@@ -245,12 +245,10 @@ public class ApplicationTest {
 
     @Test
     public void translationTest() {
-        Locale.setDefault(Locale.JAPANESE);
         assertThat(translationService.getTranslation("test.welcome", Locale.JAPANESE.getLanguage())).isEqualTo("こんにちは！");
         assertThat(translationService.getTranslation("test.welcome", Locale.ENGLISH.getLanguage())).isEqualTo("Welcome!");
 
         assertThat(translationService.getTranslation("test.hello", Arrays.asList("Brown"), Locale.JAPANESE.getLanguage())).isEqualTo("こんにちはBrown！");
         assertThat(translationService.getTranslation("test.hello", Arrays.asList("Brown"), Locale.ENGLISH.getLanguage())).isEqualTo("Hello Brown!");
     }
-
 }
