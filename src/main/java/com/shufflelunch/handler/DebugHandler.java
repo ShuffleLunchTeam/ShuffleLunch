@@ -47,7 +47,7 @@ public class DebugHandler {
         StringBuilder sb = new StringBuilder("Participant list :  ");
         Optional<List<Participant>> users = participantService.getAllParticipantList();
         users.ifPresent(list -> {
-            list.stream().forEach(p -> sb.append(" ** ").append(p.getUser()));
+            list.stream().forEach(p -> sb.append(" ** ").append(p.getUser().getName()));
         });
 
         return new TextMessage(sb.toString());
