@@ -62,7 +62,7 @@ public class MessageService {
     }
 
     public Message getFixedGroupRequest(Group group, String language) {
-        String imageUrl = createUri("/static/cony.jpg");
+        String imageUrl = createUri(getResourceName(group));
         List<Action> actionList = group.getUserList().stream().map(
                 user -> {
                     String label = translationService.getTranslation("message.group.member",
@@ -85,5 +85,33 @@ public class MessageService {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                                           .path(path).build()
                                           .toUriString();
+    }
+
+    private String getResourceName(Group group) {
+        String ret = "/static/cony.jpg";
+
+        String groupName = group.getName();
+        switch (groupName) {
+            case "Brown":
+                ret = "/static/Brown.png";
+                break;
+            case "James":
+                ret = "/static/James.png";
+                break;
+            case "Jessica":
+                ret = "/static/Jessica.png";
+                break;
+            case "Leonard":
+                ret = "/static/Leonard.jpeg";
+                break;
+            case "Sally":
+                ret = "/static/Sally.png";
+                break;
+            case "Cony":
+            default:
+        }
+
+        return ret;
+
     }
 }

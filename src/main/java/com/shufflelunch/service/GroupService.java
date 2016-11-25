@@ -28,7 +28,7 @@ public class GroupService {
     FireBaseDao fireBaseDao;
 
     private final Queue<String> groupNames = new ConcurrentLinkedQueue<>(
-            Arrays.asList("Cony", "Brown", "Sally", "Jessica", "James", "Choco"));
+            Arrays.asList("Cony", "Brown", "Sally", "Jessica", "James", "Leonard"));
 
     private final Queue<String> usedGroupNames = new ConcurrentLinkedQueue<String>();
 

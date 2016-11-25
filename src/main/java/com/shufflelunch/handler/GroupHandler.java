@@ -1,7 +1,6 @@
 package com.shufflelunch.handler;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,6 +13,7 @@ import com.shufflelunch.model.Group;
 import com.shufflelunch.model.Participant;
 import com.shufflelunch.model.User;
 import com.shufflelunch.service.GroupService;
+import com.shufflelunch.service.MessageService;
 import com.shufflelunch.service.ParticipantService;
 import com.shufflelunch.service.TranslationService;
 import com.shufflelunch.service.UserService;
@@ -35,6 +35,9 @@ public class GroupHandler {
     private UserService userService;
 
     @Autowired
+    MessageService messageService;
+
+    @Autowired
     TranslationService t;
 
     @Autowired
@@ -51,15 +54,17 @@ public class GroupHandler {
                 Optional<Group> group = groupService.getGroupForUser(actualUser);
                 if (group.isPresent()) {
                     Group g = group.get();
-                    List<Message> ret = new ArrayList<>();
-                    ret.add(new TextMessage(t.getTranslation("group.info", ImmutableList.of(g.getName()),
-                                                             actualUser.getLanguage())));
-                    g.getUserList().forEach(u -> {
-                        if (u.getMid() != actualUser.getMid()) {
-                            ret.add(new TextMessage(" - " + u.getName()));
-                        }
-                    });
-                    return ret;
+
+                    return ImmutableList.of(messageService.getFixedGroupRequest(g, actualUser.getLanguage()));
+//                    List<Message> ret = new ArrayList<>();
+//                    ret.add(new TextMessage(t.getTranslation("group.info", ImmutableList.of(g.getName()),
+//                                                             actualUser.getLanguage())));
+//                    g.getUserList().forEach(u -> {
+//                        if (u.getMid() != actualUser.getMid()) {
+//                            ret.add(new TextMessage(" - " + u.getName()));
+//                        }
+//                    });
+//                    return ret;
                 } else {
                     return ImmutableList.of(
                             new TextMessage(t.getTranslation("group.not.shuffled", actualUser.getLanguage())));
