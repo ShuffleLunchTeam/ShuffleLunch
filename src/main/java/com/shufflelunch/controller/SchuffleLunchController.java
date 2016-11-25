@@ -210,17 +210,25 @@ public class SchuffleLunchController {
     @EventMapping
     public void handlePostbackEvent(PostbackEvent event) throws IOException {
         String replyToken = event.getReplyToken();
-
         switch (event.getPostbackContent().getData()) {
             case "join_yes": {
-                this.reply(replyToken, joinLunchHandler.handleJoinConfirmation(event));
+                reply(replyToken, joinLunchHandler.handleJoinConfirmation(event));
                 break;
             }
             case "join_no": {
                 // TODO cancel the join?
-                this.reply(replyToken, joinLunchHandler.handleNotJoinConfirmation(event));
+                reply(replyToken, joinLunchHandler.handleNotJoinConfirmation(event));
                 break;
             }
+            case "lang_ja": {
+                reply(replyToken, languageHander.handleLanguageChange(event));
+                break;
+            }
+            case "lang_en": {
+                reply(replyToken, languageHander.handleLanguageChange(event));
+                break;
+            }
+
             default:
                 this.replyText(replyToken, "Got postback " + event.getPostbackContent().getData());
         }
