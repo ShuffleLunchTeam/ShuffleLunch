@@ -7,12 +7,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.InputStream;
-import java.sql.Time;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import com.shufflelunch.model.Participant;
-import com.shufflelunch.service.ParticipantService;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,7 +24,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.google.common.io.ByteStreams;
+import com.shufflelunch.model.Participant;
 import com.shufflelunch.model.User;
+import com.shufflelunch.service.ParticipantService;
 import com.shufflelunch.service.ProfileService;
 import com.shufflelunch.service.UserService;
 
@@ -144,16 +143,15 @@ public class ApplicationTest {
         byte[] json = ByteStreams.toByteArray(resource);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callback")
-                .header("X-Line-Signature", signature)
-                .content(json))
-                .andDo(print())
-                .andExpect(status().isOk());
+                                              .header("X-Line-Signature", signature)
+                                              .content(json))
+               .andDo(print())
+               .andExpect(status().isOk());
 
         RecordedRequest request = server.takeRequest(3, TimeUnit.SECONDS);
         assertThat(request.getBody().readUtf8()).contains(
                 "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"You already joined today's lunch\"}]}");
     }
-
 
     @Test
     public void followCallbackTest() throws Exception {
