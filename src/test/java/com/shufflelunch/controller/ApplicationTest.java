@@ -106,8 +106,10 @@ public class ApplicationTest {
         RecordedRequest request2 = server.takeRequest(3, TimeUnit.SECONDS);
         assertThat(request2.getPath()).isEqualTo("/v2/bot/message/reply");
         assertThat(request2.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
-        assertThat(request2.getBody().readUtf8())
-                .contains("Join Shuffle Lunch?");
+        String body = request2.getBody().readUtf8();
+        assertThat(body).contains("{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"template\",\"altText\":\"シャッフルランチに参加しますか？\",\"template\":{\"type\":\"confirm\","
+                                  + "\"text\":\"シャッフルランチに参加しますか？\",\"actions\":[{\"type\":\"postback\",\"label\":\"Yes\",\"data\":\"join_yes\"},{\"type\":\"postback\",\"label\":\"No\","
+                                  + "\"data\":\"join_no\"}]}}]}");
     }
 
     @Test
@@ -134,9 +136,9 @@ public class ApplicationTest {
         RecordedRequest request2 = server.takeRequest(3, TimeUnit.SECONDS);
         assertThat(request2.getPath()).isEqualTo("/v2/bot/message/reply");
         assertThat(request2.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
-        assertThat(request2.getBody().readUtf8())
-                .contains(
-                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Added Brown to the participant list.(ja)\"}]}");
+        String body = request2.getBody().readUtf8();
+        assertThat(body)
+                .contains("{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Brownを参加者リストに加えました。\"}]}");
 
     }
 
@@ -161,8 +163,9 @@ public class ApplicationTest {
                .andExpect(status().isOk());
 
         RecordedRequest request = server.takeRequest(3, TimeUnit.SECONDS);
-        assertThat(request.getBody().readUtf8()).contains(
-                "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"You already joined today's lunch(ja)\"}]}");
+        String body = request.getBody().readUtf8();
+        assertThat(body).contains(
+                "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"あなたは既に今日のランチに参加しています。\"}]}");
     }
 
     @Test
@@ -190,9 +193,10 @@ public class ApplicationTest {
         RecordedRequest recordedRequest = server.takeRequest(3, TimeUnit.SECONDS);
         assertThat(recordedRequest.getPath()).isEqualTo("/v2/bot/message/reply");
         assertThat(recordedRequest.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
-        assertThat(recordedRequest.getBody().readUtf8())
+        String body = recordedRequest.getBody().readUtf8();
+        assertThat(body)
                 .contains(
-                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"こんにちは Brown, welcome to Shuffle Lunch!\"}]}");
+                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"こんにちは Brown, ようこそシャッフルランチへ\"}]}");
     }
 
     @Test
@@ -235,12 +239,12 @@ public class ApplicationTest {
         RecordedRequest request2 = server.takeRequest(3, TimeUnit.SECONDS);
         assertThat(request2.getPath()).isEqualTo("/v2/bot/message/reply");
         assertThat(request2.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
-        assertThat(request2.getBody().readUtf8())
+        String body = request2.getBody().readUtf8();
+        assertThat(body)
                 .contains(
                         "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Available commands are :\"},{\"type\":\"text\",\"text\":\" - help : displays "
                         + "this help message\"},{\"type\":\"text\",\"text\":\" - join : allow you to register for next lunch\"},{\"type\":\"text\",\"text\":\" - leave : remove your registration for"
                         + " the next lunch\"},{\"type\":\"text\",\"text\":\" - group : lets you know your group and meeting point for lunch\"}]}");
-
     }
 
     @Test
