@@ -1,6 +1,7 @@
 package com.shufflelunch.handler;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,16 +42,15 @@ public class FollowLunchHandler {
 
         Optional<User> userMaybe = userService.getUser(userId);
         if (userMaybe.isPresent()) {
-            // TODO: Welcome Back Message?
-            TextMessage message = messageService.getWelcomeMessage(userMaybe.get().getName());
+            TextMessage message = messageService.getWelcomeMessage(userMaybe.get());
             return Optional.of(message);
         } else {
             Optional<UserProfileResponse> userProfileMaybe = profileService.getProfile(userId);
             if (userProfileMaybe.isPresent()) {
-                User user = new User(userId, userProfileMaybe.get().getDisplayName());
+                User user = new User(userId, userProfileMaybe.get().getDisplayName(), Locale.JAPANESE.getLanguage());
                 userService.addUser(user);
 
-                TextMessage message = messageService.getWelcomeMessage(user.getName());
+                TextMessage message = messageService.getWelcomeMessage(user);
                 return Optional.of(message);
             } else {
                 TextMessage message = new TextMessage("Unknown user profile");

@@ -82,7 +82,7 @@ public class ApplicationTest {
     @Test
     public void joinCallbackTest() throws Exception {
 
-        Optional<User> user = Optional.of(new User("sjkghfjhsg", "Brown"));
+        Optional<User> user = Optional.of(new User("sjkghfjhsg", "Brown", Locale.JAPANESE.getLanguage()));
         when(userService.getUser(any())).thenReturn(user);
 
         server.enqueue(new MockResponse().setBody("{}"));
@@ -109,7 +109,7 @@ public class ApplicationTest {
     @Test
     public void confirmCallbackTest() throws Exception {
 
-        Optional<User> user = Optional.of(new User("sjkghfjhsg", "Brown"));
+        Optional<User> user = Optional.of(new User("sjkghfjhsg", "Brown", Locale.JAPANESE.getLanguage()));
         when(userService.getUser(any())).thenReturn(user);
         when(participantService.getParticipant(any())).thenReturn(Optional.empty());
 
@@ -139,7 +139,7 @@ public class ApplicationTest {
     @Test
     public void confirmAlreadyJoinedTest() throws Exception {
 
-        Optional<User> user = Optional.of(new User("sjkghfjhsg", "Brown"));
+        Optional<User> user = Optional.of(new User("sjkghfjhsg", "Brown", Locale.JAPANESE.getLanguage()));
         when(userService.getUser(any())).thenReturn(user);
         when(participantService.getParticipant(any())).thenReturn(Optional.of(new Participant(user.get())));
 
@@ -188,8 +188,7 @@ public class ApplicationTest {
         assertThat(recordedRequest.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
         assertThat(recordedRequest.getBody().readUtf8())
                 .contains(
-                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Hello Brown, welcome to Shuffle Lunch!\\nDo you want want to join "
-                        + "today?\\n\"}]}");
+                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"こんにちは Brown, welcome to Shuffle Lunch!/nDo you want want to join today?\"}]}");
     }
 
     @Test
@@ -197,7 +196,7 @@ public class ApplicationTest {
         server.enqueue(new MockResponse().setBody("{}"));
 
         String userId = "U206d25c2ea6bd87c17655609a1c37cb8";
-        Optional<User> user = Optional.of(new User(userId, "Brown"));
+        Optional<User> user = Optional.of(new User(userId, "Brown", Locale.JAPANESE.getLanguage()));
         when(userService.getUser(userId)).thenReturn(user);
 
         String signature = "ECezgIpQNUEp4OSHYd7xGSuFG7e66MLPkCkK1Y28XTU=";
@@ -241,10 +240,10 @@ public class ApplicationTest {
     @Test
     public void translationTest() {
         Locale.setDefault(Locale.JAPANESE);
-        assertThat(translationService.getTranslation("testWelcome", Locale.JAPANESE)).isEqualTo("こんにちは！");
-        assertThat(translationService.getTranslation("testWelcome", Locale.ENGLISH)).isEqualTo("Welcome!");
+        assertThat(translationService.getTranslation("test.welcome", Locale.JAPANESE.getLanguage())).isEqualTo("こんにちは！");
+        assertThat(translationService.getTranslation("test.welcome", Locale.ENGLISH.getLanguage())).isEqualTo("Welcome!");
 
-        assertThat(translationService.getTranslation("testHello", Arrays.asList("Brown"), Locale.JAPANESE)).isEqualTo("こんにちはBrown！");
-        assertThat(translationService.getTranslation("testHello", Arrays.asList("Brown"), Locale.ENGLISH)).isEqualTo("Hello Brown!");
+        assertThat(translationService.getTranslation("test.hello", Arrays.asList("Brown"), Locale.JAPANESE.getLanguage())).isEqualTo("こんにちはBrown！");
+        assertThat(translationService.getTranslation("test.hello", Arrays.asList("Brown"), Locale.ENGLISH.getLanguage())).isEqualTo("Hello Brown!");
     }
 }

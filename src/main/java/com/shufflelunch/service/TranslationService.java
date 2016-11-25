@@ -13,19 +13,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class TranslationService {
 
-    public String getTranslation(String key, List<String> params, Locale local) {
-        String translation = getTranslation(key, local);
+    public String getTranslation(String key, List<String> params, String language) {
+        String translation = getTranslation(key, language);
         for (int i = 0; i < params.size(); i++) {
             translation = translation.replace("%@", params.get(i));
         }
         return translation;
     }
 
-    public String getTranslation(String key, Locale local) {
+    public String getTranslation(String key, String language) {
 
         InputStream utf8in;
-        if (local == Locale.ENGLISH) {
-            utf8in = getClass().getClassLoader().getResourceAsStream("translation_" + local.getLanguage() + ".properties");
+        if (language == Locale.ENGLISH.getLanguage()) {
+            utf8in = getClass().getClassLoader().getResourceAsStream("translation_" + language + ".properties");
         } else {
             utf8in = getClass().getClassLoader().getResourceAsStream("translation.properties");
         }
