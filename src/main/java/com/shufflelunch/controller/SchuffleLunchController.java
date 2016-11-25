@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -18,8 +17,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.google.common.io.ByteStreams;
 import com.shufflelunch.Application;
+import com.shufflelunch.handler.FollowLunchHandler;
 import com.shufflelunch.handler.JoinLunchHandler;
-import com.shufflelunch.model.User;
 import com.shufflelunch.service.MessageService;
 import com.shufflelunch.service.UserService;
 
@@ -81,6 +80,9 @@ public class SchuffleLunchController {
     private LineMessagingService lineMessagingService;
     @Autowired
     private JoinLunchHandler joinLunchHandler;
+
+    @Autowired
+    private FollowLunchHandler followLunchHandler;
 
     @Autowired
     private MessageService messageService;
@@ -165,30 +167,7 @@ public class SchuffleLunchController {
     @EventMapping
     public void handleFollowEvent(FollowEvent event) throws IOException {
         String replyToken = event.getReplyToken();
-
-        String userId = event.getSource().getUserId();
-        Optional<User> userMaybe = userService.getUser(userId);
-        if (userMaybe.isPresent()) {
-            // TODO: Welcome Back Message
-            TextMessage message = messageService.getWelcomeMessage(userMaybe.get().getName());
-            reply(replyToken, message);
-        } else {
-            Response<UserProfileResponse> response = lineMessagingService
-                    .getProfile(userId)
-                    .execute();
-
-            if (response.isSuccessful()) {
-                // Add new User to DB
-                UserProfileResponse profile = response.body();
-                User user = new User(userId, profile.getDisplayName());
-                userService.addUser(user);
-
-                TextMessage message = messageService.getWelcomeMessage(user.getName());
-                reply(replyToken, message);
-            } else {
-                log.error(response.errorBody().string());
-            }
-        }
+        reply(replyToken, followLunchHandler.handleFollow(event));
     }
 
     @EventMapping

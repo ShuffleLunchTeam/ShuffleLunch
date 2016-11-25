@@ -25,6 +25,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.google.common.io.ByteStreams;
 import com.shufflelunch.model.User;
+import com.shufflelunch.service.ProfileService;
 import com.shufflelunch.service.UserService;
 
 import okhttp3.mockwebserver.MockResponse;
@@ -45,7 +46,10 @@ public class ApplicationTest {
     private WebApplicationContext wac;
 
     @MockBean
-    UserService sellerService;
+    UserService userService;
+
+    @MockBean
+    ProfileService profileService;
 
     private MockMvc mockMvc;
     private static MockWebServer server;
@@ -66,7 +70,7 @@ public class ApplicationTest {
     public void joinCallbackTest() throws Exception {
 
         Optional<User> user = Optional.of(new User("sjkghfjhsg", "Brown"));
-        when(sellerService.getUser(any())).thenReturn(user);
+        when(userService.getUser(any())).thenReturn(user);
 
         server.enqueue(new MockResponse().setBody("{}"));
 
@@ -93,7 +97,7 @@ public class ApplicationTest {
     public void confirmCallbackTest() throws Exception {
 
         Optional<User> user = Optional.of(new User("sjkghfjhsg", "Brown"));
-        when(sellerService.getUser(any())).thenReturn(user);
+        when(userService.getUser(any())).thenReturn(user);
 
         server.enqueue(new MockResponse().setBody("{}"));
 
@@ -115,6 +119,37 @@ public class ApplicationTest {
         assertThat(request2.getBody().readUtf8())
                 .contains(
                         "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Registered Brown for today's lunch.\"}]}");
+
+    }
+
+    @Test
+    public void followCallbackTest() throws Exception {
+
+        when(userService.getUser(any())).thenReturn(Optional.empty());
+        when(profileService.getProfile(any())).thenReturn(Optional.empty());
+
+        server.enqueue(new MockResponse().setBody("{}"));
+
+        String signature = "ECezgIpQNUEp4OSHYd7xGSuFG7e66MLPkCkK1Y28XTU=";
+
+        InputStream resource = getClass().getClassLoader().getResourceAsStream("callback-follow.json");
+        byte[] json = ByteStreams.toByteArray(resource);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/callback")
+                                              .header("X-Line-Signature", signature)
+                                              .content(json))
+               .andDo(print())
+               .andExpect(status().isOk());
+
+        // Test request 2
+        RecordedRequest request2 = server.takeRequest(3, TimeUnit.SECONDS);
+//        assertThat(request2.getPath()).isEqualTo("/v2/bot/message/reply");
+        assertThat(request2.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
+        System.out.println("YYY");
+        System.out.println(request2.getBody().readUtf8());
+//        assertThat(request2.getBody().readUtf8())
+//                .contains(
+//                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Registered Brown for today's lunch.\"}]}");
 
     }
 }
