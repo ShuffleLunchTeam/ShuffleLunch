@@ -3,6 +3,8 @@ package com.shufflelunch.handler;
 import java.io.IOException;
 import java.util.Optional;
 
+import com.shufflelunch.model.Participant;
+import com.shufflelunch.service.ParticipantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,16 +30,21 @@ public class JoinLunchHandler {
     @Autowired
     private LunchService lunchService;
 
-    public Message handleJoinConfirmation(Event event, LineMessagingService lineMessagingService)
+    @Autowired
+    private ParticipantService participantService;
+
+    public Message handleJoinConfirmation(Event event)
             throws IOException {
         String userId = event.getSource().getUserId();
-        String userName = "you";
-        Optional<User> user = userService.getUser(userId);
-        if (user.isPresent()) {
-            userName = user.get().getName();
+        Optional<User> maybeUser = userService.getUser(userId);
+
+        if (!maybeUser.isPresent()) {
+            return new TextMessage("Sorry, you are not a member of ShuffleLunch");
         }
 
-        return new TextMessage("Registered " + userName + " for today's lunch.");
+        User user = maybeUser.get();
+        participantService.addParticipant(new Participant(user));
+        return new TextMessage("Added " + user.getName() + " to the participant list.");
     }
 
     public Message handleJoinRequest(Event event, TextMessageContent content) {
