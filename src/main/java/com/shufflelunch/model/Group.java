@@ -5,12 +5,14 @@ import java.util.List;
 
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Data
 @RequiredArgsConstructor
+@NoArgsConstructor
 public class Group {
 
     @NonNull
@@ -23,5 +25,9 @@ public class Group {
 
     public void addUser(User user) {
         userList.add(user);
+    }
+
+    public void addUserList(List<User> list) {
+        userList.addAll(list);
     }
 }
