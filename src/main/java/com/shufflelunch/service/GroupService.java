@@ -34,5 +34,16 @@ public class GroupService {
     public Optional<List<Group>> getAllGroupList() {
         return fireBaseDao.readList("groups", Group.class);
     }
-    
+
+    public boolean deleteGroup(Group group) {
+        return deleteGroup(group.getName());
+    }
+
+    public boolean deleteGroup(String name) {
+        return fireBaseDao.delete("groups/" + name);
+    }
+
+    public boolean deleteAllGroup() {
+        return fireBaseDao.delete("groups/");
+    }
 }
