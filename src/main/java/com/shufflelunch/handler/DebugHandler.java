@@ -33,10 +33,10 @@ public class DebugHandler {
     }
 
     private Message userList() {
-        StringBuilder sb = new StringBuilder("Users list :/n");
+        StringBuilder sb = new StringBuilder("Users list :  ");
         Optional<List<User>> users = userService.getAllUserList();
         users.ifPresent(list -> {
-            list.stream().forEach(user -> sb.append(" - ").append(user.getName()).append("/n"));
+            list.stream().forEach(user -> sb.append(" ** ").append(user.getName()));
         });
 
         return new TextMessage(sb.toString());
@@ -44,11 +44,10 @@ public class DebugHandler {
     }
 
     private Message participantList() {
-        StringBuilder sb = new StringBuilder("Participant list :/n");
+        StringBuilder sb = new StringBuilder("Participant list :  ");
         Optional<List<Participant>> users = participantService.getAllParticipantList();
         users.ifPresent(list -> {
-            list.stream().forEach(p -> sb.append(" - ").append(p.getUser()).append("/t").append(p.getLanguage())
-                                         .append("/n"));
+            list.stream().forEach(p -> sb.append(" ** ").append(p.getUser()));
         });
 
         return new TextMessage(sb.toString());
