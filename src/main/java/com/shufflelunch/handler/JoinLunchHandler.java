@@ -3,8 +3,10 @@ package com.shufflelunch.handler;
 import java.io.IOException;
 import java.util.Optional;
 
+import com.google.common.collect.ImmutableList;
 import com.shufflelunch.model.Participant;
 import com.shufflelunch.service.ParticipantService;
+import com.shufflelunch.service.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +15,6 @@ import com.shufflelunch.service.UserService;
 
 import com.linecorp.bot.model.action.PostbackAction;
 import com.linecorp.bot.model.event.Event;
-import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TemplateMessage;
 import com.linecorp.bot.model.message.TextMessage;
@@ -28,6 +29,9 @@ public class JoinLunchHandler {
     @Autowired
     private ParticipantService participantService;
 
+    @Autowired
+    private TranslationService translationService;
+
     public Message handleJoinConfirmation(Event event)
             throws IOException {
         String userId = event.getSource().getUserId();
@@ -41,11 +45,12 @@ public class JoinLunchHandler {
         User user = maybeUser.get();
 
         if (participantService.getParticipant(user).isPresent()) {
-            return new TextMessage("You already joined today's lunch");
+            return new TextMessage(translationService.getTranslation("join.already", user.getLanguage()));
         }
 
         participantService.addParticipant(new Participant(user));
-        return new TextMessage("Added " + user.getName() + " to the participant list.");
+        String message = translationService.getTranslation("join.added", ImmutableList.of(user.getName()), user.getLanguage());
+        return new TextMessage(message);
     }
 
     public Message handleNotJoinConfirmation(Event event)
@@ -62,20 +67,29 @@ public class JoinLunchHandler {
         Optional<Participant> participant = participantService.getParticipant(user);
 
         if (!participant.isPresent()) {
-            return new TextMessage("You didn't sign up to lunch today.");
+            return new TextMessage(translationService.getTranslation("join.not", user.getLanguage()));
         }
 
         participantService.deleteParticipant(participant.get());
-        return new TextMessage("Removed " + user.getName() + " from the participant list.");
+        String message = translationService.getTranslation("join.removed", ImmutableList.of(user.getName()), user.getLanguage());
+        return new TextMessage(message);
     }
 
-    public Message handleJoinRequest(Event event, TextMessageContent content) {
+    public Message handleJoinRequest(Event event) {
+        String userId = event.getSource().getUserId();
+        Optional<User> maybeUser = userService.getUser(userId);
+        if (!maybeUser.isPresent()) {
+            // TODO add to users DB
+            return new TextMessage("Sorry, you are not a member of ShuffleLunch");
+        }
+
+        User user = maybeUser.get();
         ConfirmTemplate confirmTemplate = new ConfirmTemplate(
-                "Join Shuffle Lunch?",
+                translationService.getTranslation("join.opt_in", user.getLanguage()),
                 new PostbackAction("Yes", "join_yes"),
                 new PostbackAction("No", "join_no")
         );
-        return new TemplateMessage("Join Shuffle Lunch?", confirmTemplate);
+        return new TemplateMessage(translationService.getTranslation("join.opt_in", user.getLanguage()), confirmTemplate);
     }
 
     public Message handleUnSubscribe(Event event) throws IOException {

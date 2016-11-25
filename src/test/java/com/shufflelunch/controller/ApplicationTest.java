@@ -136,7 +136,7 @@ public class ApplicationTest {
         assertThat(request2.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
         assertThat(request2.getBody().readUtf8())
                 .contains(
-                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Added Brown to the participant list.\"}]}");
+                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Added Brown to the participant list.(ja)\"}]}");
 
     }
 
@@ -162,7 +162,7 @@ public class ApplicationTest {
 
         RecordedRequest request = server.takeRequest(3, TimeUnit.SECONDS);
         assertThat(request.getBody().readUtf8()).contains(
-                "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"You already joined today's lunch\"}]}");
+                "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"You already joined today's lunch(ja)\"}]}");
     }
 
     @Test
@@ -192,7 +192,7 @@ public class ApplicationTest {
         assertThat(recordedRequest.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
         assertThat(recordedRequest.getBody().readUtf8())
                 .contains(
-                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"こんにちは Brown, welcome to Shuffle Lunch!/nDo you want want to join today?\"}]}");
+                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"こんにちは Brown, welcome to Shuffle Lunch!\"}]}");
     }
 
     @Test

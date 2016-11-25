@@ -307,7 +307,7 @@ public class SchuffleLunchController {
             // ShuffleLunch //
             //////////////////
             case "join": {
-                this.reply(replyToken, joinLunchHandler.handleJoinRequest(event, content));
+                this.reply(replyToken, joinLunchHandler.handleJoinRequest(event));
                 break;
             }
             case "leave":
