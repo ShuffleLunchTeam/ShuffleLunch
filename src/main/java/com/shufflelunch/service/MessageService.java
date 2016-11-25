@@ -88,24 +88,24 @@ public class MessageService {
     }
 
     private String getResourceName(Group group) {
-        String ret = "/static/cony.jpg";
+        String ret = "static/cony.jpg";
 
         String groupName = group.getName();
         switch (groupName) {
             case "Brown":
-                ret = "/static/Brown.png";
+                ret = "static/Brown.png";
                 break;
             case "James":
-                ret = "/static/James.png";
+                ret = "static/James.png";
                 break;
             case "Jessica":
-                ret = "/static/Jessica.png";
+                ret = "static/Jessica.png";
                 break;
             case "Leonard":
-                ret = "/static/Leonard.jpeg";
+                ret = "static/Leonard.jpeg";
                 break;
             case "Sally":
-                ret = "/static/Sally.png";
+                ret = "static/Sally.png";
                 break;
             case "Cony":
             default:
