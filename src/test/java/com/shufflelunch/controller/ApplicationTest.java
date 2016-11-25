@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.google.common.io.ByteStreams;
+import com.shufflelunch.handler.LanguageHandler;
 import com.shufflelunch.model.Participant;
 import com.shufflelunch.model.User;
 import com.shufflelunch.service.ParticipantService;
@@ -64,6 +65,9 @@ public class ApplicationTest {
     @Autowired
     TranslationService translationService;
 
+    @Autowired
+    LanguageHandler languageHandler;
+
     private MockMvc mockMvc;
     private static MockWebServer server;
 
@@ -75,8 +79,8 @@ public class ApplicationTest {
 
     @Before
     public void before() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(wac)
-                                      .build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+                                 .build();
     }
 
     @Test
@@ -233,7 +237,9 @@ public class ApplicationTest {
         assertThat(request2.getHeader("Authorization")).isEqualTo("Bearer TOKEN");
         assertThat(request2.getBody().readUtf8())
                 .contains(
-                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Available commands are :\"},{\"type\":\"text\",\"text\":\" - help : displays this help message\"},{\"type\":\"text\",\"text\":\" - join : allow you to register for next lunch\"},{\"type\":\"text\",\"text\":\" - leave : remove your registration for the next lunch\"},{\"type\":\"text\",\"text\":\" - group : lets you know your group and meeting point for lunch\"}]}");
+                        "{\"replyToken\":\"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA\",\"messages\":[{\"type\":\"text\",\"text\":\"Available commands are :\"},{\"type\":\"text\",\"text\":\" - help : displays "
+                        + "this help message\"},{\"type\":\"text\",\"text\":\" - join : allow you to register for next lunch\"},{\"type\":\"text\",\"text\":\" - leave : remove your registration for"
+                        + " the next lunch\"},{\"type\":\"text\",\"text\":\" - group : lets you know your group and meeting point for lunch\"}]}");
 
     }
 
@@ -246,4 +252,5 @@ public class ApplicationTest {
         assertThat(translationService.getTranslation("test.hello", Arrays.asList("Brown"), Locale.JAPANESE.getLanguage())).isEqualTo("こんにちはBrown！");
         assertThat(translationService.getTranslation("test.hello", Arrays.asList("Brown"), Locale.ENGLISH.getLanguage())).isEqualTo("Hello Brown!");
     }
+
 }
