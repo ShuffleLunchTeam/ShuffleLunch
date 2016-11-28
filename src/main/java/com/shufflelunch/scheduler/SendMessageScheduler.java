@@ -5,7 +5,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.shufflelunch.handler.GroupHandler;
-
 import com.shufflelunch.service.GroupService;
 import com.shufflelunch.service.MessagePushService;
 import com.shufflelunch.service.ParticipantService;
@@ -37,9 +36,9 @@ public class SendMessageScheduler {
         participantService.deleteAllParticipant();
         log.info("end deleteAllParticipant");
 
-        log.info("start removeGroupNames");
-        groupService.clearGroupNames();
-        log.info("end clearGroupNames");
+        log.info("start delete groups");
+        groupService.deleteAllGroup();
+        log.info("end delete groups");
     }
 
     //I want scheduled without public holiday
