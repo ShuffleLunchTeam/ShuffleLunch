@@ -42,16 +42,14 @@ public class SendMessageScheduler {
     }
 
     //I want scheduled without public holiday
-    //@Scheduled(cron = "0 0 12 * * 1-5", zone = "Asia/Tokyo")
-    @Scheduled(cron = "0 0 12 * * *", zone = "Asia/Tokyo")
+    @Scheduled(cron = "0 0 12 * * 1-5", zone = "Asia/Tokyo")
     public void pushJoinMessage() {
         log.info("start pushJoinMessage");
         messagePushService.pushJoinMessageToAllUsers();
         log.info("end pushJoinMessage ");
     }
 
-    //@Scheduled(cron = "0 50 12 * * 1-5", zone = "Asia/Tokyo")
-    @Scheduled(cron = "0 50 12 * * *", zone = "Asia/Tokyo")
+    @Scheduled(cron = "0 50 12 * * 1-5", zone = "Asia/Tokyo")
     public void shuffleGroupsAndPushNotifications() {
         log.info("start handleShuffleGroup");
         groupHandler.handleShuffleGroup();
